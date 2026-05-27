@@ -1,47 +1,77 @@
 /*
- * Type-safe record handling using DatoCMS's generated types.
+ * Maps a DatoCMS record to its URL on this website (and its slug). Used by the
+ * "Web Previews" and "SEO/Readability Analysis" plugin endpoints:
  *
- * This file uses types generated from your DatoCMS schema via `npm run generate-cma-types`.
- * The generated types provide full autocomplete and compile-time safety when
- * accessing record fields.
+ * - src/pages/api/preview-links/index.ts
+ * - src/pages/api/seo-analysis/index.ts
  *
- * See: https://www.datocms.com/docs/content-management-api/resources/item#type-safe-development-with-typescript
+ * Switching on `item.__itemTypeId` against the generated `.ID` constants lets
+ * TypeScript narrow `item.attributes` to the right model.
  */
 import type { RawApiTypes } from '@datocms/cma-client';
-import { type AnyModel, Page } from './cma-types';
+import {
+  type AnyModel,
+  Article,
+  ArticleCategory,
+  Contacts,
+  Cv,
+  CustomerService,
+  Home,
+  PremiumArticlesPage,
+  Publications,
+  Why,
+} from './cma-types';
+import { graphql } from './graphql';
+import { executeQuery } from './executeQuery';
 
-/*
- * Both the "Web Previews" and "SEO/Readability Analysis" plugins from DatoCMS
- * need to know the URL of the site that corresponds to each DatoCMS record to
- * work properly. These two functions are responsible for returning this
- * information, and are utilized by the API routes associated with the two
- * plugins:
- *
- * - src/pages/api/seo-analysis/index.ts
- * - src/pages/api/preview-links/index.ts
- */
+const premiumSlugQuery = graphql(/* GraphQL */ `
+  query PremiumSlugQuery {
+    premiumArticlesPage {
+      slug
+    }
+  }
+`);
+
+let premiumSlugCache: string | null = null;
+
+async function getPremiumSlug(): Promise<string> {
+  if (premiumSlugCache) return premiumSlugCache;
+  const { premiumArticlesPage } = await executeQuery(premiumSlugQuery);
+  premiumSlugCache = premiumArticlesPage?.slug ?? 'premium';
+  return premiumSlugCache;
+}
 
 export async function recordToWebsiteRoute(
   item: RawApiTypes.Item<AnyModel>,
   locale: string,
 ): Promise<string | null> {
   switch (item.__itemTypeId) {
-    case Page.ID: {
+    case Article.ID: {
       const slug = await recordToSlug(item, locale);
-      return slug ? `/page/${slug}` : null;
+      if (!slug) return null;
+      if (item.attributes.premium) {
+        return `/${await getPremiumSlug()}/articles/${slug}`;
+      }
+      return `/articles/${slug}`;
     }
-    /*
-     * Add more cases here as you add more models to your DatoCMS schema.
-     * Switching on `item.__itemTypeId` and referencing the generated `.ID`
-     * constants gives TypeScript the discriminant it needs to narrow
-     * `item.attributes` to the right model. Always derive the slug via
-     * `recordToSlug()` so the two helpers stay in sync. Example:
-     *
-     * case Article.ID: {
-     *   const slug = await recordToSlug(item, locale);
-     *   return slug ? `/blog/${slug}` : null;
-     * }
-     */
+    case ArticleCategory.ID: {
+      const slug = await recordToSlug(item, locale);
+      return slug ? `/categories/${slug}` : null;
+    }
+    case PremiumArticlesPage.ID:
+      return item.attributes.slug ? `/${item.attributes.slug}` : null;
+    case Home.ID:
+      return '/';
+    case Cv.ID:
+      return '/cv';
+    case Why.ID:
+      return '/why';
+    case Publications.ID:
+      return '/publications';
+    case CustomerService.ID:
+      return '/customer_service';
+    case Contacts.ID:
+      return '/contacts';
     default:
       return null;
   }
@@ -52,21 +82,12 @@ export async function recordToSlug(
   _locale: string,
 ): Promise<string | null> {
   switch (item.__itemTypeId) {
-    case Page.ID: {
-      /*
-       * Using generated types, TypeScript knows exactly which fields exist.
-       * `item.attributes.slug` is fully typed - no casts needed!
-       */
+    case Article.ID:
       return item.attributes.slug;
-    }
-    /*
-     * Add more cases here as you add more models to your DatoCMS schema.
-     * Example for an article model with a slug field:
-     *
-     * case Article.ID: {
-     *   return item.attributes.slug;
-     * }
-     */
+    case ArticleCategory.ID:
+      return item.attributes.slug;
+    case PremiumArticlesPage.ID:
+      return item.attributes.slug;
     default:
       return null;
   }

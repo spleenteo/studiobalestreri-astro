@@ -1,3 +1,58 @@
 ---
-return Astro.redirect('/page/home', 302);
+import Layout from '~/layouts/Layout.astro';
+import { graphql } from '~/lib/datocms/graphql';
+import { executeQuery } from '~/lib/datocms/executeQuery';
+import { TagFragment } from '~/lib/datocms/commonFragments';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
+import { RichText } from '~/components/RichText';
+import { ArticleBox, ArticleBoxFragment } from '~/components/ArticleBox';
+
+/**
+ * Home: claim (hero) + latest 15 articles + "Vedi tutti" link.
+ * Mirrors the old Middleman `index.html.slim`.
+ */
+const query = graphql(
+  /* GraphQL */ `
+    query HomeQuery {
+      home {
+        _seoMetaTags {
+          ...TagFragment
+        }
+        claim(markdown: true)
+      }
+      allArticles(orderBy: pubDate_DESC, first: 15) {
+        ...ArticleBoxFragment
+      }
+      premiumArticlesPage {
+        slug
+      }
+    }
+  `,
+  [TagFragment, ArticleBoxFragment],
+);
+
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+const { home, allArticles, premiumArticlesPage } = await executeQuery(query, {
+  includeDrafts: draftModeEnabled,
+});
+
+const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 ---
+
+<Layout additionalSeo={home?._seoMetaTags ?? []}>
+  {
+    home?.claim && (
+      <div class="claim">
+        <RichText html={home.claim} />
+      </div>
+    )
+  }
+
+  <div class="page">
+    {allArticles.map((article) => <ArticleBox article={article} premiumSlug={premiumSlug} />)}
+    <a class="button button--primary" href="/articles">Vedi tutti gli articoli</a>
+  </div>
+
+  <DraftModeQueryListener query={query} />
+</Layout>

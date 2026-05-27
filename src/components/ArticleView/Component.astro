@@ -1,0 +1,102 @@
+---
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { ResponsiveImage } from '~/components/ResponsiveImage';
+import { RichText } from '~/components/RichText';
+import { VideoEmbed } from '~/components/VideoEmbed';
+import { ShareLinks } from '~/components/ShareLinks';
+import { ArticleViewFragment } from './fragments';
+
+interface Props {
+  article: FragmentOf<typeof ArticleViewFragment>;
+}
+
+const { article: articleProp } = Astro.props;
+const article = readFragment(ArticleViewFragment, articleProp);
+
+const dateLabel = new Intl.DateTimeFormat('it-IT', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(article.pubDate));
+const categories = article.categories.map((category) => category.name).join(', ');
+const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
+---
+
+<article class="page article-detail">
+  <div class="article-box__meta">
+    <span>{categories}</span>
+    <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
+  </div>
+
+  <h1 class="article-detail__title">{article.title}</h1>
+
+  {
+    article.featuredImage?.responsiveImage && (
+      <div class="article-detail__image">
+        <ResponsiveImage data={article.featuredImage.responsiveImage} />
+      </div>
+    )
+  }
+
+  {
+    /*
+     * PREMIUM GATE (seam) — see docs/shaping/frontend-shaping.md (R6).
+     * Today every article renders in full. To re-enable gating later, this is
+     * the single spot to change: if `article.premium` and the request has no
+     * authorised premium session (auth-astro / Supabase), render
+     * `article.abstract` + a sign-in CTA instead of the body/blocks below.
+     */
+  }
+
+  <RichText html={article.body} />
+
+  {
+    article.blocks.map((block) =>
+      block.__typename === 'TextBlockRecord' ? (
+        <div class="article-detail__block">
+          <RichText html={block.text} />
+        </div>
+      ) : block.__typename === 'VideoBlockRecord' ? (
+        <div class="article-detail__block">
+          <VideoEmbed video={block.videoUrl} />
+        </div>
+      ) : null,
+    )
+  }
+
+  {
+    article.documents.length > 0 && (
+      <div class="article-box__doc">
+        <h4 class="article-box__doc-title">Documenti disponibili</h4>
+        {article.documents.map((document) => (
+          <a
+            class="article-box__doc-item"
+            href={document.doc.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span aria-hidden="true">↓</span>
+            <span>{document.title}</span>
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  <footer class="article-box__footer">
+    <ShareLinks url={shareUrl} title={article.title} />
+  </footer>
+</article>
+
+<style>
+  .article-detail__title {
+    font-size: clamp(1.8rem, 1.3rem + 2vw, 2.8rem);
+    margin-bottom: var(--space-3);
+  }
+  .article-detail__image {
+    margin-bottom: var(--space-3);
+  }
+  .article-detail__block {
+    margin: var(--space-3) 0;
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { fetchArchivePage } from '~/lib/articles';
+import { Archive } from '~/components/Archive';
+
+const INCIPIT =
+  'In questa area del sito trovate quanto è stato pubblicato nel corso del tempo. Nelle sezioni successive, invece, trovate il materiale concernente una specifica area di lavoro. Tutto il materiale è liberamente scaricabile ed utilizzabile senza restrizioni, previa citazione della fonte.';
+
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+const { articles, premiumSlug, totalPages } = await fetchArchivePage(1, draftModeEnabled);
+---
+
+<Layout>
+  <Archive
+    articles={articles}
+    premiumSlug={premiumSlug}
+    currentPage={1}
+    totalPages={totalPages}
+    incipit={INCIPIT}
+  />
+</Layout>

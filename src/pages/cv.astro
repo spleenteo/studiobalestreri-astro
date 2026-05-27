@@ -1,0 +1,36 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { graphql } from '~/lib/datocms/graphql';
+import { executeQuery } from '~/lib/datocms/executeQuery';
+import { TagFragment } from '~/lib/datocms/commonFragments';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
+import { SimplePage } from '~/components/SimplePage';
+
+const query = graphql(
+  /* GraphQL */ `
+    query CvQuery {
+      cv {
+        _seoMetaTags {
+          ...TagFragment
+        }
+        title
+        body(markdown: true)
+      }
+    }
+  `,
+  [TagFragment],
+);
+
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+const { cv } = await executeQuery(query, { includeDrafts: draftModeEnabled });
+
+if (!cv) {
+  return new Response(null, { status: 404, statusText: 'Not found' });
+}
+---
+
+<Layout additionalSeo={cv._seoMetaTags}>
+  <SimplePage title={cv.title} bodyHtml={cv.body} />
+  <DraftModeQueryListener query={query} />
+</Layout>

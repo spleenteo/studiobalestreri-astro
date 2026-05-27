@@ -1,0 +1,30 @@
+---
+/**
+ * Simple, script-free social share links (replaces the defunct AddThis).
+ */
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+
+const links = [
+  { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { label: 'X', href: `https://twitter.com/intent/tweet?url=${u}&text=${t}` },
+  { label: 'Email', href: `mailto:?subject=${t}&body=${u}` },
+];
+---
+
+<div class="share">
+  <span class="share__label">Condividi:</span>
+  {
+    links.map((link) => (
+      <a href={link.href} target="_blank" rel="noopener noreferrer">
+        {link.label}
+      </a>
+    ))
+  }
+</div>

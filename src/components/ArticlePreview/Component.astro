@@ -1,0 +1,34 @@
+---
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { ResponsiveImage } from '~/components/ResponsiveImage';
+import { articlePath } from '~/lib/urls';
+import { ArticlePreviewFragment } from './fragments';
+
+interface Props {
+  article: FragmentOf<typeof ArticlePreviewFragment>;
+  premiumSlug: string;
+}
+
+const { article: articleProp, premiumSlug } = Astro.props;
+const article = readFragment(ArticlePreviewFragment, articleProp);
+const href = articlePath(article, premiumSlug);
+const dateLabel = new Intl.DateTimeFormat('it-IT', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(new Date(article.pubDate));
+---
+
+<a class="hl" href={href}>
+  <div class="hl__content">
+    <div class="hl__date">{article.premium ? `${dateLabel} · Premium` : dateLabel}</div>
+    <div class="hl__title">{article.title}</div>
+  </div>
+  {
+    article.featuredImage?.responsiveImage && (
+      <div class="hl__image">
+        <ResponsiveImage data={article.featuredImage.responsiveImage} />
+      </div>
+    )
+  }
+</a>

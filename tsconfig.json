@@ -1,12 +1,14 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "exclude": ["dist", "migrations"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "~/components/*": ["src/components/*"],
       "~/layouts/*": ["src/layouts/*"],
       "~/lib/*": ["src/lib/*"],
-      "~/pages/*": ["src/pages/*"]
+      "~/pages/*": ["src/pages/*"],
+      "~/styles/*": ["src/styles/*"]
     },
     "plugins": [
       {

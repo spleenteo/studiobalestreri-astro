@@ -1,0 +1,47 @@
+---
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { ResponsiveImage } from '~/components/ResponsiveImage';
+import { RichText } from '~/components/RichText';
+import { articlePath } from '~/lib/urls';
+import { excerpt } from '~/lib/text';
+import { ArticleBoxFragment } from './fragments';
+
+interface Props {
+  article: FragmentOf<typeof ArticleBoxFragment>;
+  premiumSlug: string;
+}
+
+const { article: articleProp, premiumSlug } = Astro.props;
+const article = readFragment(ArticleBoxFragment, articleProp);
+
+const href = articlePath(article, premiumSlug);
+const dateLabel = new Intl.DateTimeFormat('it-IT', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(new Date(article.pubDate));
+const categories = article.categories.map((category) => category.name).join(', ');
+---
+
+<article class="article-box">
+  <div class="article-box__meta">
+    <span>{categories}</span>
+    <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
+  </div>
+
+  <h2 class="article-box__title"><a href={href}>{article.title}</a></h2>
+
+  {
+    article.featuredImage?.responsiveImage && (
+      <a class="article-box__image-link" href={href}>
+        <ResponsiveImage data={article.featuredImage.responsiveImage} />
+      </a>
+    )
+  }
+
+  <div class="article-box__excerpt">
+    {article.abstract ? <RichText html={article.abstract} /> : <p>{excerpt(article.body)}</p>}
+  </div>
+
+  <a class="button button--small" href={href}>Leggi tutto</a>
+</article>

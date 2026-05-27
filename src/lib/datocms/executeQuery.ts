@@ -3,6 +3,7 @@ import {
   DATOCMS_DRAFT_CONTENT_CDA_TOKEN,
   DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN,
   DATOCMS_BASE_EDITING_URL,
+  DATOCMS_ENVIRONMENT,
 } from 'astro:env/server';
 import type { TadaDocumentNode } from 'gql.tada';
 
@@ -19,6 +20,12 @@ export async function executeQuery<Result, Variables>(
     variables: options?.variables,
     excludeInvalid: true,
     includeDrafts: options?.includeDrafts,
+    /*
+     * Target a specific DatoCMS environment when DATOCMS_ENVIRONMENT is set;
+     * otherwise the query hits the primary environment. Keeps local dev and
+     * sandboxes (e.g. "astro-26") isolated from production content.
+     */
+    environment: DATOCMS_ENVIRONMENT,
     token: options?.includeDrafts
       ? DATOCMS_DRAFT_CONTENT_CDA_TOKEN
       : DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN,

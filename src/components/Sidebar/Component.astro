@@ -1,0 +1,75 @@
+---
+/**
+ * Left sidebar: site menu (mobile only), categories and useful links.
+ * Desktop: in-flow sticky column. Mobile: off-canvas drawer toggled by the
+ * hamburger button (wired in Layout). Data is passed in from the Layout's
+ * single chrome query.
+ */
+import { MAIN_MENU } from '~/lib/nav';
+import { categoryPath } from '~/lib/urls';
+
+interface Props {
+  categories: ReadonlyArray<{ name: string; slug: string }>;
+  links: ReadonlyArray<{ name: string; url: string }>;
+  premiumSlug: string;
+}
+
+const { categories, links, premiumSlug } = Astro.props;
+---
+
+<button
+  class="sidebar__toggler"
+  type="button"
+  aria-label="Apri il menu"
+  aria-controls="sidebar"
+  aria-expanded="false"
+>
+  ☰
+</button>
+
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar__m-menu sidebar__widget" aria-label="Menu">
+    <div class="sidebar__widget-title">Studio Balestreri</div>
+    <ul>
+      {
+        MAIN_MENU.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="sidebar__widget">
+    <div class="sidebar__widget-title">Categorie</div>
+    <ul>
+      <li><a href="/articles">Tutti</a></li>
+      {
+        categories.map((category) => (
+          <li>
+            <a href={categoryPath(category.slug)}>{category.name}</a>
+          </li>
+        ))
+      }
+      <li><a href={`/${premiumSlug}`}>Premium</a></li>
+    </ul>
+  </div>
+
+  {
+    links.length > 0 && (
+      <div class="sidebar__widget">
+        <div class="sidebar__widget-title">Link utili</div>
+        <ul>
+          {links.map((link) => (
+            <li>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</aside>

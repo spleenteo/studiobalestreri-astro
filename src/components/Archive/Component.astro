@@ -1,0 +1,28 @@
+---
+/**
+ * Presentational archive: optional incipit + white card with full ArticleBox
+ * cards + the numbered pager. Data is fetched by the route (lib/articles.ts).
+ */
+import type { FragmentOf } from '~/lib/datocms/graphql';
+import { ArticleBox, ArticleBoxFragment } from '~/components/ArticleBox';
+import { Pager } from '~/components/Pager';
+
+interface Props {
+  articles: ReadonlyArray<FragmentOf<typeof ArticleBoxFragment>>;
+  premiumSlug: string;
+  currentPage: number;
+  totalPages: number;
+  incipit?: string;
+}
+
+const { articles, premiumSlug, currentPage, totalPages, incipit } = Astro.props;
+---
+
+<h1 class="page-title">Archivio articoli{currentPage > 1 ? ` · Pagina ${currentPage}` : ''}</h1>
+
+{incipit && <p class="claim__incipit">{incipit}</p>}
+
+<div class="page">
+  {articles.map((article) => <ArticleBox article={article} premiumSlug={premiumSlug} />)}
+  <Pager currentPage={currentPage} totalPages={totalPages} />
+</div>

@@ -1,6 +1,10 @@
 ---
 import { QueryListener } from '@datocms/astro';
-import { DATOCMS_DRAFT_CONTENT_CDA_TOKEN, DATOCMS_BASE_EDITING_URL } from 'astro:env/server';
+import {
+  DATOCMS_DRAFT_CONTENT_CDA_TOKEN,
+  DATOCMS_BASE_EDITING_URL,
+  DATOCMS_ENVIRONMENT,
+} from 'astro:env/server';
 import type { ComponentProps } from 'react';
 import { isDraftModeEnabled } from '~/lib/draftMode';
 
@@ -12,7 +16,7 @@ import { isDraftModeEnabled } from '~/lib/draftMode';
 
 type Props<QueryResult, QueryVariables> = Omit<
   ComponentProps<typeof QueryListener<QueryResult, QueryVariables>>,
-  'includeDrafts' | 'token' | 'excludeInvalid' | 'contentLink' | 'baseEditingUrl'
+  'includeDrafts' | 'token' | 'excludeInvalid' | 'contentLink' | 'baseEditingUrl' | 'environment'
 >;
 
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
@@ -27,6 +31,7 @@ const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
       includeDrafts
       contentLink="v1"
       baseEditingUrl={DATOCMS_BASE_EDITING_URL}
+      environment={DATOCMS_ENVIRONMENT}
     />
   )
 }

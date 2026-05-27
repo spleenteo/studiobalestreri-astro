@@ -1,0 +1,60 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { readFragment } from '~/lib/datocms/graphql';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { fetchArchivePage, fetchArticle } from '~/lib/articles';
+import { Archive } from '~/components/Archive';
+import { ArticleView, ArticleViewFragment } from '~/components/ArticleView';
+
+/**
+ * Combined route (preserves old URLs):
+ *   - `/articles/2`     → archive pagination page (numeric slug)
+ *   - `/articles/{slug}` → article detail (non-premium; premium ones are
+ *     redirected to their `/{premium}/articles/{slug}` canonical URL)
+ */
+const { slug = '' } = Astro.params;
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+const isPageNumber = /^\d+$/.test(slug);
+
+let archive: Awaited<ReturnType<typeof fetchArchivePage>> | null = null;
+let articleData: Awaited<ReturnType<typeof fetchArticle>> | null = null;
+
+if (isPageNumber) {
+  const page = Number(slug);
+  archive = await fetchArchivePage(page, draftModeEnabled);
+  if (page < 1 || page > archive.totalPages) {
+    return new Response(null, { status: 404, statusText: 'Not found' });
+  }
+} else {
+  articleData = await fetchArticle(slug, draftModeEnabled);
+  if (!articleData.article) {
+    return new Response(null, { status: 404, statusText: 'Not found' });
+  }
+  const article = readFragment(ArticleViewFragment, articleData.article);
+  // Premium articles are canonical under the premium prefix.
+  if (article.premium) {
+    return Astro.redirect(`/${articleData.premiumSlug}/articles/${article.slug}`, 301);
+  }
+}
+
+const seo = articleData?.article
+  ? readFragment(ArticleViewFragment, articleData.article)._seoMetaTags
+  : [];
+---
+
+{
+  isPageNumber ? (
+    <Layout>
+      <Archive
+        articles={archive!.articles}
+        premiumSlug={archive!.premiumSlug}
+        currentPage={Number(slug)}
+        totalPages={archive!.totalPages}
+      />
+    </Layout>
+  ) : (
+    <Layout additionalSeo={seo}>
+      <ArticleView article={articleData!.article!} />
+    </Layout>
+  )
+}

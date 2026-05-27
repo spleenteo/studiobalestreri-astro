@@ -1,0 +1,73 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { graphql } from '~/lib/datocms/graphql';
+import { executeQuery } from '~/lib/datocms/executeQuery';
+import { TagFragment } from '~/lib/datocms/commonFragments';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { RichText } from '~/components/RichText';
+import { ArticlePreview, ArticlePreviewFragment } from '~/components/ArticlePreview';
+
+const { slug = '' } = Astro.params;
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+
+const categoryQuery = graphql(
+  /* GraphQL */ `
+    query CategoryQuery($slug: String!) {
+      articleCategory(filter: { slug: { eq: $slug } }) {
+        id
+        name
+        description(markdown: true)
+        _seoMetaTags {
+          ...TagFragment
+        }
+      }
+    }
+  `,
+  [TagFragment],
+);
+
+const { articleCategory } = await executeQuery(categoryQuery, {
+  variables: { slug },
+  includeDrafts: draftModeEnabled,
+});
+
+if (!articleCategory) {
+  return new Response(null, { status: 404, statusText: 'Not found' });
+}
+
+const articlesQuery = graphql(
+  /* GraphQL */ `
+    query CategoryArticlesQuery($ids: [ItemId]) {
+      allArticles(orderBy: pubDate_DESC, filter: { categories: { anyIn: $ids } }) {
+        ...ArticlePreviewFragment
+      }
+      premiumArticlesPage {
+        slug
+      }
+    }
+  `,
+  [ArticlePreviewFragment],
+);
+
+const { allArticles, premiumArticlesPage } = await executeQuery(articlesQuery, {
+  variables: { ids: [articleCategory.id] },
+  includeDrafts: draftModeEnabled,
+});
+
+const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
+---
+
+<Layout additionalSeo={articleCategory._seoMetaTags}>
+  <h1 class="page-title">{articleCategory.name}</h1>
+  {
+    articleCategory.description && (
+      <div class="claim__incipit">
+        <RichText html={articleCategory.description} />
+      </div>
+    )
+  }
+
+  <div class="page">
+    {allArticles.map((article) => <ArticlePreview article={article} premiumSlug={premiumSlug} />)}
+  </div>
+</Layout>

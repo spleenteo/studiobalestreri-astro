@@ -1,0 +1,18 @@
+---
+/**
+ * Renders a DatoCMS "text" field already converted to HTML (fetched with the
+ * `markdown: true` argument), wrapped in `.formatted-content`.
+ *
+ * This is the single seam for the future Structured Text migration: when the
+ * article/page bodies move to Structured Text, swap the call sites to the
+ * `<Text />` wrapper without touching the rest of the templates.
+ */
+interface Props {
+  html: string | null | undefined;
+  class?: string;
+}
+
+const { html, class: className } = Astro.props;
+---
+
+{html && <div class:list={['formatted-content', className]} set:html={html} />}

@@ -1,0 +1,27 @@
+---
+/**
+ * Top header: logo (text) + main navigation. The menu is shown inline on
+ * desktop; on mobile it lives in the off-canvas Sidebar (see global.css).
+ */
+import { MAIN_MENU } from '~/lib/nav';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="header">
+  <a class="header__logo" href="/">Studio Balestreri</a>
+
+  <nav class="header__menu" aria-label="Navigazione principale">
+    {
+      MAIN_MENU.map((item) => (
+        <a
+          class:list={['header__menu__item', { 'is-active': pathname === item.href }]}
+          href={item.href}
+          aria-current={pathname === item.href ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

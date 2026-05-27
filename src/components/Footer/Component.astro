@@ -1,0 +1,89 @@
+---
+/**
+ * Footer: Mailchimp newsletter sign-up + iubenda privacy/cookie links +
+ * "Made with DatoCMS" credit. Reproduces the old Middleman footer.
+ *
+ * NOTE: confirm the Mailchimp list (u / id) and iubenda policy id are still the
+ * current ones before going live.
+ */
+const MAILCHIMP_ACTION =
+  '//studiobalestreri.us12.list-manage.com/subscribe/post?u=afa6d676b0ef1c7cb8640c72a&id=275774841d';
+const IUBENDA_PRIVACY = '//www.iubenda.com/privacy-policy/7793512';
+const IUBENDA_COOKIE = '//www.iubenda.com/privacy-policy/7793512/cookie-policy';
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__title">Studio Balestreri</div>
+
+    <div class="footer__newsletter">
+      <div class="footer__newsletter-title">Ricevi i nostri articoli in email</div>
+
+      <form
+        class="form"
+        action={MAILCHIMP_ACTION}
+        method="post"
+        id="mc-embedded-subscribe-form"
+        name="mc-embedded-subscribe-form"
+        target="_blank"
+      >
+        <div class="form__row form__row--2">
+          <input type="text" placeholder="Nome" name="FNAME" id="mce-FNAME" aria-label="Nome" />
+          <input
+            type="text"
+            placeholder="Cognome"
+            name="LNAME"
+            id="mce-LNAME"
+            aria-label="Cognome"
+          />
+        </div>
+
+        <div class="form__field">
+          <input
+            type="email"
+            placeholder="Email"
+            name="EMAIL"
+            id="mce-EMAIL"
+            aria-label="Email"
+            required
+          />
+        </div>
+
+        {/* Honeypot anti-bot field */}
+        <div class="visually-hidden" aria-hidden="true">
+          <input type="text" name="b_afa6d676b0ef1c7cb8640c72a_275774841d" tabindex="-1" value="" />
+        </div>
+
+        <label class="form__check" for="gdpr_30409">
+          <input type="checkbox" id="gdpr_30409" name="gdpr[30409]" value="Y" required />
+          <span>Acconsento a ricevere comunicazioni tramite email.</span>
+        </label>
+
+        <label class="form__check" for="privacy">
+          <input type="checkbox" id="privacy" name="privacy" value="Y" required />
+          <span>
+            Autorizzo il trattamento dei miei dati personali ai sensi del Decreto Legislativo
+            196/2003 e del GDPR (Regolamento UE 2016/679).
+            <a href={IUBENDA_PRIVACY} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+          </span>
+        </label>
+
+        <div class="form__field">
+          <button class="button button--rev" type="submit">Iscriviti</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer__privacy">
+      <a href={IUBENDA_PRIVACY} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+      {' - '}
+      <a href={IUBENDA_COOKIE} target="_blank" rel="noopener noreferrer">Cookie Policy</a>
+    </div>
+
+    <div class="footer__credits">
+      <a href="https://www.datocms.com" target="_blank" rel="noopener noreferrer">
+        Made with DatoCMS
+      </a>
+    </div>
+  </div>
+</footer>

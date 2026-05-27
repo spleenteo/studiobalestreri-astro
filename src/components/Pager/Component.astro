@@ -1,0 +1,68 @@
+---
+/**
+ * Numbered pagination for the article archive. Page 1 lives at `/articles`,
+ * page N at `/articles/N` (preserves the old Middleman URLs). Windowed so 46
+ * pages don't render 46 links.
+ */
+interface Props {
+  currentPage: number;
+  totalPages: number;
+}
+
+const { currentPage, totalPages } = Astro.props;
+
+const pagePath = (n: number) => (n <= 1 ? '/articles' : `/articles/${n}`);
+
+// Build a windowed list with ellipses: 1 … c-1 c c+1 … last
+const window = new Set<number>([1, totalPages]);
+for (let n = currentPage - 1; n <= currentPage + 1; n++) {
+  if (n >= 1 && n <= totalPages) window.add(n);
+}
+const sorted = [...window].sort((a, b) => a - b);
+const items: Array<number | 'gap'> = [];
+let prev = 0;
+for (const n of sorted) {
+  if (n - prev > 1) items.push('gap');
+  items.push(n);
+  prev = n;
+}
+---
+
+{
+  totalPages > 1 && (
+    <nav class="pagination" aria-label="Paginazione archivio">
+      {currentPage > 1 && (
+        <a class="pagination__item" href={pagePath(currentPage - 1)} rel="prev">
+          ‹ Precedente
+        </a>
+      )}
+      {items.map((item) =>
+        item === 'gap' ? (
+          <span class="pagination__gap" aria-hidden="true">
+            …
+          </span>
+        ) : (
+          <a
+            class:list={['pagination__item', { 'is-active': item === currentPage }]}
+            href={pagePath(item)}
+            aria-current={item === currentPage ? 'page' : undefined}
+          >
+            {item}
+          </a>
+        ),
+      )}
+      {currentPage < totalPages && (
+        <a class="pagination__item" href={pagePath(currentPage + 1)} rel="next">
+          Prossima ›
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pagination__gap {
+    padding: 0.3rem 0.2rem;
+    color: var(--color-gray);
+  }
+</style>
