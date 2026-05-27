@@ -11,7 +11,9 @@ input ArticleCategoryModelFilter {
   updatedAt: UpdatedAtFilter
   _isValid: BooleanFilter
   description: TextFilter
+  label: StringFilter
   name: StringFilter
+  seo: SeoFilter
   slug: SlugFilter
   OR: [ArticleCategoryModelFilter]
   AND: [ArticleCategoryModelFilter]
@@ -40,6 +42,8 @@ enum ArticleCategoryModelOrderBy {
   updatedAt_DESC
   _isValid_ASC
   _isValid_DESC
+  label_ASC
+  label_DESC
   name_ASC
   name_DESC
 }
@@ -70,7 +74,9 @@ type ArticleCategoryRecord implements RecordInterface {
     markdown: Boolean
   ): String
   id: ItemId!
+  label: String!
   name: String!
+  seo: SeoField
   slug: String!
   updatedAt: DateTime!
 }
@@ -168,7 +174,7 @@ type ArticleRecord implements RecordInterface {
   documents: [DocumentRecord!]!
   featuredImage: FileField
   id: ItemId!
-  premium: BooleanType
+  premium: BooleanType!
   pubDate: Date!
   seo: SeoField
   slug: String!
@@ -3002,11 +3008,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: ArticleCategoryModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns meta information regarding a record collection"""
@@ -3014,11 +3015,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: ArticleModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns meta information regarding a record collection"""
@@ -3026,11 +3022,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: DocumentModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns meta information regarding a record collection"""
@@ -3038,11 +3029,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: LinkModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns meta information regarding a record collection"""
@@ -3050,11 +3036,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: SchemaMigrationModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns meta information regarding an assets collection"""
@@ -3069,11 +3050,6 @@ type Query {
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
     filter: UserModelFilter
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
   ): CollectionMetadata!
 
   """Returns the single instance record"""
@@ -4295,9 +4271,9 @@ type UserRecord implements RecordInterface {
   email: String
   fullName: String
   id: ItemId!
-  newsletter: BooleanType
+  newsletter: BooleanType!
   organization: String
-  premiumUser: BooleanType
+  premiumUser: BooleanType!
   updatedAt: DateTime!
 }
 

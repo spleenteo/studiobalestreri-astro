@@ -9,7 +9,9 @@ import { MAIN_MENU } from '~/lib/nav';
 import { categoryPath } from '~/lib/urls';
 
 interface Props {
-  categories: ReadonlyArray<{ name: string; slug: string }>;
+  // `label` is the short menu name shown in the sidebar; `name` is the full
+  // category name, kept for the truncation tooltip and the accessible name.
+  categories: ReadonlyArray<{ name: string; label: string; slug: string }>;
   links: ReadonlyArray<{ name: string; url: string }>;
   premiumSlug: string;
 }
@@ -44,15 +46,17 @@ const { categories, links, premiumSlug } = Astro.props;
   <div class="sidebar__widget">
     <div class="sidebar__widget-title">Categorie</div>
     <ul>
-      <li><a href="/articles">Tutti</a></li>
+      <li data-full="Tutti"><a href="/articles">Tutti</a></li>
       {
         categories.map((category) => (
-          <li>
-            <a href={categoryPath(category.slug)}>{category.name}</a>
+          <li data-full={category.name}>
+            <a href={categoryPath(category.slug)} aria-label={category.name}>
+              {category.label}
+            </a>
           </li>
         ))
       }
-      <li><a href={`/${premiumSlug}`}>Premium</a></li>
+      <li data-full="Premium"><a href={`/${premiumSlug}`}>Premium</a></li>
     </ul>
   </div>
 
@@ -62,7 +66,7 @@ const { categories, links, premiumSlug } = Astro.props;
         <div class="sidebar__widget-title">Link utili</div>
         <ul>
           {links.map((link) => (
-            <li>
+            <li data-full={link.name}>
               <a href={link.url} target="_blank" rel="noopener noreferrer">
                 {link.name}
               </a>
@@ -73,3 +77,34 @@ const { categories, links, premiumSlug } = Astro.props;
     )
   }
 </aside>
+
+<script>
+  // Flag sidebar items whose label is visually truncated, so the CSS tooltip
+  // (the full name) appears only when it's actually needed. Categories show the
+  // short `label`; the full name stays available via `aria-label`/`data-full`.
+  const items = document.querySelectorAll<HTMLLIElement>(
+    '#sidebar .sidebar__widget li[data-full]',
+  );
+
+  const measure = () => {
+    items.forEach((li) => {
+      const link = li.querySelector('a');
+      if (!link) return;
+      li.toggleAttribute('data-truncated', link.scrollWidth - link.clientWidth > 1);
+    });
+  };
+
+  measure();
+  // Re-measure once the web fonts settle (Spectral changes label widths).
+  document.fonts?.ready.then(measure);
+
+  let resizeTimer: ReturnType<typeof setTimeout>;
+  window.addEventListener(
+    'resize',
+    () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(measure, 150);
+    },
+    { passive: true },
+  );
+</script>

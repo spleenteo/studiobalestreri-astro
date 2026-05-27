@@ -34,6 +34,7 @@ const query = graphql(
       }
       allArticleCategories(orderBy: name_ASC) {
         name
+        label
         slug
       }
       allLinks(orderBy: position_ASC) {
@@ -67,7 +68,7 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
     />
     <Seo data={[..._site.faviconMetaTags, ...additionalSeo]} />
   </head>
@@ -105,6 +106,30 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
           toggler?.setAttribute('aria-expanded', 'false');
         }
       });
+    </script>
+
+    <script>
+      // Light scroll-reveal. Opt-in via `.has-motion`, which is added only when
+      // motion is welcome — so no-JS and reduced-motion visitors never get the
+      // hidden start state.
+      const revealables = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const wantsMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (revealables.length && wantsMotion && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('has-motion');
+        const observer = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+                obs.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.06 },
+        );
+        revealables.forEach((el) => observer.observe(el));
+      }
     </script>
   </body>
 </html>
