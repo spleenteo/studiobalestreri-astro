@@ -82,9 +82,7 @@ const { categories, links, premiumSlug } = Astro.props;
   // Flag sidebar items whose label is visually truncated, so the CSS tooltip
   // (the full name) appears only when it's actually needed. Categories show the
   // short `label`; the full name stays available via `aria-label`/`data-full`.
-  const items = document.querySelectorAll<HTMLLIElement>(
-    '#sidebar .sidebar__widget li[data-full]',
-  );
+  const items = document.querySelectorAll<HTMLLIElement>('#sidebar .sidebar__widget li[data-full]');
 
   const measure = () => {
     items.forEach((li) => {

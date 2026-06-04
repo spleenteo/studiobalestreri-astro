@@ -15,7 +15,7 @@ interface Props {
 const { title, bodyHtml, incipit } = Astro.props;
 ---
 
-<h1 class="page-title">{title}</h1>
+<h1 class="page-title" data-reveal>{title}</h1>
 
 {incipit && <p class="claim__incipit">{incipit}</p>}
 

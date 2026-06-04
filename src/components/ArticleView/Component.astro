@@ -22,7 +22,7 @@ const categories = article.categories.map((category) => category.name).join(', '
 const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
 ---
 
-<article class="page article-detail">
+<article class="page article-detail" data-reveal>
   <div class="article-box__meta">
     <span>{categories}</span>
     <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
@@ -90,13 +90,14 @@ const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
 
 <style>
   .article-detail__title {
-    font-size: clamp(1.8rem, 1.3rem + 2vw, 2.8rem);
-    margin-bottom: var(--space-3);
+    font-size: var(--text-h1);
+    line-height: 1.1;
+    margin-bottom: var(--space-4);
   }
   .article-detail__image {
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
   }
   .article-detail__block {
-    margin: var(--space-3) 0;
+    margin: var(--space-4) 0;
   }
 </style>

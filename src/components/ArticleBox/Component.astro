@@ -23,7 +23,7 @@ const dateLabel = new Intl.DateTimeFormat('it-IT', {
 const categories = article.categories.map((category) => category.name).join(', ');
 ---
 
-<article class="article-box">
+<article class="article-box" data-reveal>
   <div class="article-box__meta">
     <span>{categories}</span>
     <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
