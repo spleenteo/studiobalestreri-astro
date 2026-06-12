@@ -9,6 +9,13 @@ export function withCORS(responseInit?: ResponseInit): ResponseInit {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      /*
+       * Lets the DatoCMS UI (a public HTTPS origin) call a `http://localhost`
+       * dev server from the Web Previews plugin. Chrome's Private Network Access
+       * blocks public→loopback requests unless the preflight echoes this header.
+       * Harmless in production, where requests never target a private address.
+       */
+      'Access-Control-Allow-Private-Network': 'true',
     },
   };
 }
