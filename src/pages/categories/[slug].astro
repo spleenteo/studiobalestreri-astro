@@ -6,6 +6,7 @@ import { TagFragment } from '~/lib/datocms/commonFragments';
 import { isDraftModeEnabled } from '~/lib/draftMode';
 import { RichText } from '~/components/RichText';
 import { ArticlePreview, ArticlePreviewFragment } from '~/components/ArticlePreview';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
 
 const { slug = '' } = Astro.params;
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
@@ -70,4 +71,7 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
   <div class="page">
     {allArticles.map((article) => <ArticlePreview article={article} premiumSlug={premiumSlug} />)}
   </div>
+
+  <DraftModeQueryListener query={categoryQuery} variables={{ slug }} />
+  <DraftModeQueryListener query={articlesQuery} variables={{ ids: [articleCategory.id] }} />
 </Layout>

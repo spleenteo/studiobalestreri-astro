@@ -2,9 +2,16 @@
 import Layout from '~/layouts/Layout.astro';
 import { readFragment } from '~/lib/datocms/graphql';
 import { isDraftModeEnabled } from '~/lib/draftMode';
-import { fetchArchivePage, fetchArticle } from '~/lib/articles';
+import {
+  ARTICLES_PER_PAGE,
+  archiveQuery,
+  articleQuery,
+  fetchArchivePage,
+  fetchArticle,
+} from '~/lib/articles';
 import { Archive } from '~/components/Archive';
 import { ArticleView, ArticleViewFragment } from '~/components/ArticleView';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
 
 /**
  * Combined route (preserves old URLs):
@@ -51,10 +58,15 @@ const seo = articleData?.article
         currentPage={Number(slug)}
         totalPages={archive!.totalPages}
       />
+      <DraftModeQueryListener
+        query={archiveQuery}
+        variables={{ first: ARTICLES_PER_PAGE, skip: (Number(slug) - 1) * ARTICLES_PER_PAGE }}
+      />
     </Layout>
   ) : (
     <Layout additionalSeo={seo}>
       <ArticleView article={articleData!.article!} />
+      <DraftModeQueryListener query={articleQuery} variables={{ slug }} />
     </Layout>
   )
 }

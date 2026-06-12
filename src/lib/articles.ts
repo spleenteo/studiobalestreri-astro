@@ -5,7 +5,7 @@ import { ArticleViewFragment } from '~/components/ArticleView';
 
 export const ARTICLES_PER_PAGE = 10;
 
-const archiveQuery = graphql(
+export const archiveQuery = graphql(
   /* GraphQL */ `
     query ArchiveQuery($first: IntType!, $skip: IntType!) {
       allArticles(orderBy: pubDate_DESC, first: $first, skip: $skip) {
@@ -37,7 +37,7 @@ export async function fetchArchivePage(page: number, includeDrafts: boolean) {
   };
 }
 
-const articleQuery = graphql(
+export const articleQuery = graphql(
   /* GraphQL */ `
     query ArticleQuery($slug: String!) {
       article(filter: { slug: { eq: $slug } }) {

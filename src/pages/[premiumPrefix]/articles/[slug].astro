@@ -2,8 +2,9 @@
 import Layout from '~/layouts/Layout.astro';
 import { readFragment } from '~/lib/datocms/graphql';
 import { isDraftModeEnabled } from '~/lib/draftMode';
-import { fetchArticle } from '~/lib/articles';
+import { articleQuery, fetchArticle } from '~/lib/articles';
 import { ArticleView, ArticleViewFragment } from '~/components/ArticleView';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
 
 /**
  * Premium article detail at `/{premiumSlug}/articles/{slug}`. Validates the
@@ -30,4 +31,5 @@ if (!unmasked.premium) {
 
 <Layout additionalSeo={unmasked._seoMetaTags}>
   <ArticleView article={article} />
+  <DraftModeQueryListener query={articleQuery} variables={{ slug }} />
 </Layout>
