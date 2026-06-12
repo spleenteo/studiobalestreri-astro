@@ -8,32 +8,26 @@ export type Article = ItemTypeDefinition<
   EnvironmentSettings,
   '626',
   {
-    title: {
-      type: 'string';
-    };
     categories: {
       type: 'links';
     };
+    slug: {
+      type: 'slug';
+    };
+    title: {
+      type: 'string';
+    };
     abstract: {
-      type: 'text';
-    };
-    featured_image: {
-      type: 'file';
-    };
-    body: {
       type: 'text';
     };
     pub_date: {
       type: 'date';
     };
-    documents: {
-      type: 'links';
-    };
     seo: {
       type: 'seo';
     };
-    slug: {
-      type: 'slug';
+    body: {
+      type: 'text';
     };
     premium: {
       type: 'boolean';
@@ -41,6 +35,12 @@ export type Article = ItemTypeDefinition<
     blocks: {
       type: 'rich_text';
       blocks: TextBlock | VideoBlock;
+    };
+    documents: {
+      type: 'links';
+    };
+    featured_image: {
+      type: 'file';
     };
   }
 >;
@@ -76,11 +76,17 @@ export type ArticleCategory = ItemTypeDefinition<
     name: {
       type: 'string';
     };
-    description: {
-      type: 'text';
-    };
     slug: {
       type: 'slug';
+    };
+    label: {
+      type: 'string';
+    };
+    seo: {
+      type: 'seo';
+    };
+    description: {
+      type: 'text';
     };
   }
 >;
@@ -323,7 +329,21 @@ export const SchemaMigration = {
   REF: { type: 'item_type', id: 'FT4_HUNPR62V7tZMdxulUA' },
 } as const;
 
-export type AnyBlock = TextBlock | VideoBlock;
+export type DocumentBlock = ItemTypeDefinition<
+  EnvironmentSettings,
+  'LPrYNDqfTIOrLWW7EvTqiA',
+  {
+    pdf_file: {
+      type: 'file';
+    };
+  }
+>;
+export const DocumentBlock = {
+  ID: 'LPrYNDqfTIOrLWW7EvTqiA',
+  REF: { type: 'item_type', id: 'LPrYNDqfTIOrLWW7EvTqiA' },
+} as const;
+
+export type AnyBlock = TextBlock | VideoBlock | DocumentBlock;
 export type AnyModel =
   | Article
   | Home
