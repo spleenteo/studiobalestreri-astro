@@ -8,9 +8,7 @@ export type MenuItem = { label: string; href: string };
  * the navigation entries, in `position` order, each linking to `/info/{slug}`.
  * "Home" is kept as the first entry (the logo also links there).
  */
-export function buildMainMenu(
-  pages: ReadonlyArray<{ title: string; slug: string }>,
-): MenuItem[] {
+export function buildMainMenu(pages: ReadonlyArray<{ title: string; slug: string }>): MenuItem[] {
   return [
     { label: 'Home', href: '/' },
     ...pages.map((page) => ({ label: page.title, href: pagePath(page.slug) })),
