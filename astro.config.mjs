@@ -52,4 +52,41 @@ export default defineConfig({
     validateSecrets: true,
   },
   integrations: [react()],
+  vite: {
+    /*
+     * Disable Vite's built-in dev CORS so it stops short-circuiting the OPTIONS
+     * preflight (it answers 204 without the PNA/origin headers). With it off, the
+     * preflight reaches the middleware below. Dev-only — no effect on the build.
+     */
+    server: { cors: false },
+    plugins: [
+      /*
+       * Dev-only: the Web Previews plugin (running on https://plugins-cdn.datocms.com)
+       * fetches our local endpoints over the `loopback` address space. Chrome's
+       * Private Network Access blocks that unless the CORS *preflight* echoes
+       * `Access-Control-Allow-Private-Network: true` with a matching origin. In dev
+       * the OPTIONS preflight is answered by Vite before our Astro route runs, so we
+       * intercept it here. Not used in the production build (apply: 'serve').
+       */
+      {
+        name: 'datocms-local-preview-preflight',
+        apply: 'serve',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.method === 'OPTIONS' && req.url?.startsWith('/api/')) {
+              res.setHeader('Access-Control-Allow-Origin', req.headers.origin ?? '*');
+              res.setHeader('Vary', 'Origin');
+              res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+              res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+              res.setHeader('Access-Control-Allow-Private-Network', 'true');
+              res.statusCode = 204;
+              res.end();
+              return;
+            }
+            next();
+          });
+        },
+      },
+    ],
+  },
 });
