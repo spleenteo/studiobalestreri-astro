@@ -336,6 +336,9 @@ export type DocumentBlock = ItemTypeDefinition<
     pdf_file: {
       type: 'file';
     };
+    description: {
+      type: 'string';
+    };
   }
 >;
 export const DocumentBlock = {
@@ -343,7 +346,48 @@ export const DocumentBlock = {
   REF: { type: 'item_type', id: 'LPrYNDqfTIOrLWW7EvTqiA' },
 } as const;
 
-export type AnyBlock = TextBlock | VideoBlock | DocumentBlock;
+export type ImageBlock = ItemTypeDefinition<
+  EnvironmentSettings,
+  'V4cRheN2Qb-50jtMu767Ng',
+  {
+    image: {
+      type: 'file';
+    };
+  }
+>;
+export const ImageBlock = {
+  ID: 'V4cRheN2Qb-50jtMu767Ng',
+  REF: { type: 'item_type', id: 'V4cRheN2Qb-50jtMu767Ng' },
+} as const;
+
+export type Page = ItemTypeDefinition<
+  EnvironmentSettings,
+  'fWdSlPs-SL6NV-FB6p28iA',
+  {
+    title: {
+      type: 'string';
+    };
+    body: {
+      type: 'structured_text';
+      blocks: VideoBlock | DocumentBlock | ImageBlock;
+    };
+    slug: {
+      type: 'slug';
+    };
+    seo: {
+      type: 'seo';
+    };
+    position: {
+      type: 'integer';
+    };
+  }
+>;
+export const Page = {
+  ID: 'fWdSlPs-SL6NV-FB6p28iA',
+  REF: { type: 'item_type', id: 'fWdSlPs-SL6NV-FB6p28iA' },
+} as const;
+
+export type AnyBlock = TextBlock | VideoBlock | DocumentBlock | ImageBlock;
 export type AnyModel =
   | Article
   | Home
@@ -357,5 +401,6 @@ export type AnyModel =
   | Document
   | PremiumArticlesPage
   | User
-  | SchemaMigration;
+  | SchemaMigration
+  | Page;
 export type AnyBlockOrModel = AnyBlock | AnyModel;

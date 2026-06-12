@@ -17,6 +17,7 @@ import {
   Cv,
   CustomerService,
   Home,
+  Page,
   PremiumArticlesPage,
   Publications,
   Why,
@@ -60,6 +61,10 @@ export async function recordToWebsiteRoute(
     }
     case PremiumArticlesPage.ID:
       return item.attributes.slug ? `/${item.attributes.slug}` : null;
+    case Page.ID: {
+      const slug = await recordToSlug(item, locale);
+      return slug ? `/info/${slug}` : null;
+    }
     case Home.ID:
       return '/';
     case Cv.ID:
@@ -87,6 +92,8 @@ export async function recordToSlug(
     case ArticleCategory.ID:
       return item.attributes.slug;
     case PremiumArticlesPage.ID:
+      return item.attributes.slug;
+    case Page.ID:
       return item.attributes.slug;
     default:
       return null;

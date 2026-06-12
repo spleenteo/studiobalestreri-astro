@@ -8,6 +8,7 @@ import { graphql } from '~/lib/datocms/graphql';
 import { executeQuery } from '~/lib/datocms/executeQuery';
 import { TagFragment } from '~/lib/datocms/commonFragments';
 import { isDraftModeEnabled } from '~/lib/draftMode';
+import { buildMainMenu } from '~/lib/nav';
 
 import { Header } from '~/components/Header';
 import { Sidebar } from '~/components/Sidebar';
@@ -41,6 +42,10 @@ const query = graphql(
         name
         url
       }
+      allPages(orderBy: position_ASC) {
+        title
+        slug
+      }
       premiumArticlesPage {
         slug
       }
@@ -50,11 +55,15 @@ const query = graphql(
 );
 
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
-const { _site, allArticleCategories, allLinks, premiumArticlesPage } = await executeQuery(query, {
-  includeDrafts: draftModeEnabled,
-});
+const { _site, allArticleCategories, allLinks, allPages, premiumArticlesPage } = await executeQuery(
+  query,
+  {
+    includeDrafts: draftModeEnabled,
+  },
+);
 
 const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
+const menu = buildMainMenu(allPages);
 ---
 
 <!doctype html>
@@ -76,10 +85,15 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
   <body>
     <a class="skip-link" href="#main">Salta al contenuto</a>
 
-    <Header />
+    <Header menu={menu} />
 
     <div class="shell">
-      <Sidebar categories={allArticleCategories} links={allLinks} premiumSlug={premiumSlug} />
+      <Sidebar
+        menu={menu}
+        categories={allArticleCategories}
+        links={allLinks}
+        premiumSlug={premiumSlug}
+      />
       <main id="main" class="main">
         <slot />
       </main>

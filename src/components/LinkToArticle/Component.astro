@@ -1,0 +1,25 @@
+---
+/**
+ * Renders an inline Structured Text link that targets an Article record. The
+ * link label is the editor's text, rendered through the default `<slot />`.
+ *
+ * Always points at the canonical `/articles/{slug}`; premium articles are
+ * transparently redirected to their `/{premium}/articles/{slug}` URL by that
+ * route, so we don't need the premium slug here.
+ */
+import type { TransformedMeta } from 'datocms-structured-text-generic-html-renderer';
+import type { ItemLink } from 'datocms-structured-text-utils';
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { ArticleLinkFragment } from './fragments';
+
+interface Props {
+  node: ItemLink;
+  attrs: TransformedMeta;
+  record: FragmentOf<typeof ArticleLinkFragment>;
+}
+
+const { record, attrs } = Astro.props;
+const article = readFragment(ArticleLinkFragment, record);
+---
+
+<a {...attrs} href={`/articles/${article.slug}`}><slot /></a>

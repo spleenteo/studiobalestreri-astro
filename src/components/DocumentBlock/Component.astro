@@ -1,0 +1,84 @@
+---
+/**
+ * Renders a `DocumentBlock` embedded in a Page's Structured Text body: a PDF
+ * icon next to the file's human-readable name and, when present, a short
+ * description of its content.
+ */
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { DocumentBlockFragment } from './fragments';
+
+interface Props {
+  block: FragmentOf<typeof DocumentBlockFragment>;
+}
+
+const { pdfFile, description } = readFragment(DocumentBlockFragment, Astro.props.block);
+
+// Human-readable label: the asset title set in DatoCMS, falling back to the
+// raw file name when no title was provided.
+const label = pdfFile.title || pdfFile.filename;
+---
+
+<a class="document-block" href={pdfFile.url} target="_blank" rel="noopener noreferrer">
+  <svg
+    class="document-block__icon"
+    viewBox="0 0 32 32"
+    width="36"
+    height="36"
+    role="img"
+    aria-label="PDF"
+  >
+    <path
+      d="M8 2h12l6 6v20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"
+      fill="#E2493A"></path>
+    <path d="M20 2l6 6h-6V2z" fill="#B83227"></path>
+    <text
+      x="16"
+      y="23"
+      text-anchor="middle"
+      font-family="system-ui, sans-serif"
+      font-size="7"
+      font-weight="700"
+      fill="#fff">PDF</text
+    >
+  </svg>
+  <span class="document-block__text">
+    <span class="document-block__name">{label}</span>
+    {description && <span class="document-block__desc">{description}</span>}
+  </span>
+</a>
+
+<style>
+  .document-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .document-block:hover {
+    border-color: color-mix(in srgb, currentColor 35%, transparent);
+    background-color: color-mix(in srgb, currentColor 4%, transparent);
+  }
+  .document-block__icon {
+    flex: none;
+  }
+  .document-block__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .document-block__name {
+    font-weight: 600;
+  }
+  .document-block__desc {
+    font-size: 0.875rem;
+    opacity: 0.75;
+  }
+</style>

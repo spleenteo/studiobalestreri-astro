@@ -1,0 +1,61 @@
+---
+/**
+ * Editorial page at `/info/{slug}`, driven by the DatoCMS `page` model. The
+ * Structured Text `body` is rendered through the project `<Text />` wrapper with
+ * per-field component maps for embedded blocks (video / document / image) and
+ * inline record links (articles / other pages).
+ */
+import Layout from '~/layouts/Layout.astro';
+import { isDraftModeEnabled } from '~/lib/draftMode';
+import { fetchPage, pageQuery } from '~/lib/pages';
+import { Text } from '~/components/Text';
+import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
+import { VideoBlock } from '~/components/VideoBlock';
+import { DocumentBlock } from '~/components/DocumentBlock';
+import { ImageBlock } from '~/components/ImageBlock';
+import { LinkToArticle } from '~/components/LinkToArticle';
+import { LinkToPage } from '~/components/LinkToPage';
+
+const { slug = '' } = Astro.params;
+const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
+
+const { page } = await fetchPage(slug, draftModeEnabled);
+
+if (!page) {
+  return new Response(null, { status: 404, statusText: 'Not found' });
+}
+---
+
+<Layout additionalSeo={page._seoMetaTags}>
+  <article class="info-page">
+    <h1 class="page-title">{page.title}</h1>
+
+    <div class="info-page__body">
+      <Text
+        data={page.body}
+        blockComponents={{
+          VideoBlockRecord: VideoBlock,
+          DocumentBlockRecord: DocumentBlock,
+          ImageBlockRecord: ImageBlock,
+        }}
+        linkToRecordComponents={{
+          ArticleRecord: LinkToArticle,
+          PageRecord: LinkToPage,
+        }}
+      />
+    </div>
+  </article>
+
+  <DraftModeQueryListener query={pageQuery} variables={{ slug }} />
+</Layout>
+
+<style>
+  .info-page {
+    max-width: 70ch;
+  }
+  .info-page__body :global(p),
+  .info-page__body :global(ul),
+  .info-page__body :global(ol) {
+    margin-block: 0.85em;
+  }
+</style>

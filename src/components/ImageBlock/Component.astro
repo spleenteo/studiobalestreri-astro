@@ -1,0 +1,34 @@
+---
+/**
+ * Renders an `ImageBlock` embedded in a Page's Structured Text body: a single
+ * responsive image via the shared `<ResponsiveImage />`.
+ */
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { ResponsiveImage } from '~/components/ResponsiveImage';
+import { ImageBlockFragment } from './fragments';
+
+interface Props {
+  block: FragmentOf<typeof ImageBlockFragment>;
+}
+
+const { image } = readFragment(ImageBlockFragment, Astro.props.block);
+---
+
+{
+  image.responsiveImage && (
+    <figure class="image-block">
+      <ResponsiveImage data={image.responsiveImage} />
+    </figure>
+  )
+}
+
+<style>
+  .image-block {
+    margin: 1.5rem 0;
+  }
+  .image-block :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+</style>

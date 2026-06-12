@@ -1,0 +1,22 @@
+---
+/**
+ * Renders an inline Structured Text link that targets another Page record. The
+ * link label is the editor's text, rendered through the default `<slot />`.
+ */
+import type { TransformedMeta } from 'datocms-structured-text-generic-html-renderer';
+import type { ItemLink } from 'datocms-structured-text-utils';
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { pagePath } from '~/lib/urls';
+import { PageLinkFragment } from './fragments';
+
+interface Props {
+  node: ItemLink;
+  attrs: TransformedMeta;
+  record: FragmentOf<typeof PageLinkFragment>;
+}
+
+const { record, attrs } = Astro.props;
+const page = readFragment(PageLinkFragment, record);
+---
+
+<a {...attrs} href={pagePath(page.slug)}><slot /></a>

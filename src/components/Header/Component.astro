@@ -3,8 +3,13 @@
  * Top header: logo (text) + main navigation. The menu is shown inline on
  * desktop; on mobile it lives in the off-canvas Sidebar (see global.css).
  */
-import { MAIN_MENU } from '~/lib/nav';
+import type { MenuItem } from '~/lib/nav';
 
+interface Props {
+  menu: readonly MenuItem[];
+}
+
+const { menu } = Astro.props;
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
@@ -13,7 +18,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   <nav class="header__menu" aria-label="Navigazione principale">
     {
-      MAIN_MENU.map((item) => (
+      menu.map((item) => (
         <a
           class:list={['header__menu__item', { 'is-active': pathname === item.href }]}
           href={item.href}

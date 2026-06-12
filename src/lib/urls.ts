@@ -13,3 +13,7 @@ export function articlePath(
 export function categoryPath(slug: string): string {
   return `/categories/${slug}`;
 }
+
+export function pagePath(slug: string): string {
+  return `/info/${slug}`;
+}

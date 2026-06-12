@@ -5,10 +5,11 @@
  * hamburger button (wired in Layout). Data is passed in from the Layout's
  * single chrome query.
  */
-import { MAIN_MENU } from '~/lib/nav';
+import type { MenuItem } from '~/lib/nav';
 import { categoryPath } from '~/lib/urls';
 
 interface Props {
+  menu: readonly MenuItem[];
   // `label` is the short menu name shown in the sidebar; `name` is the full
   // category name, kept for the truncation tooltip and the accessible name.
   categories: ReadonlyArray<{ name: string; label: string; slug: string }>;
@@ -16,7 +17,7 @@ interface Props {
   premiumSlug: string;
 }
 
-const { categories, links, premiumSlug } = Astro.props;
+const { menu, categories, links, premiumSlug } = Astro.props;
 ---
 
 <button
@@ -34,7 +35,7 @@ const { categories, links, premiumSlug } = Astro.props;
     <div class="sidebar__widget-title">Studio Balestreri</div>
     <ul>
       {
-        MAIN_MENU.map((item) => (
+        menu.map((item) => (
           <li>
             <a href={item.href}>{item.label}</a>
           </li>
