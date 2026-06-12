@@ -1,3 +1,4 @@
+import { deserializeRawItem } from '@datocms/rest-client-utils';
 import type { APIRoute } from 'astro';
 import { SECRET_API_TOKEN } from 'astro:env/server';
 import { recordToWebsiteRoute } from '~/lib/datocms/recordInfo';
@@ -41,8 +42,15 @@ export const POST: APIRoute = async ({ url, request }) => {
      */
     const { item, locale } = await request.json();
 
-    // We can use this info to generate the frontend URL associated
-    const recordUrl = await recordToWebsiteRoute(item, locale);
+    /*
+     * The plugin sends the record in raw JSON:API format, where the model is in
+     * `relationships.item_type.data.id` and there is no `__itemTypeId`. Our
+     * `recordToWebsiteRoute` dispatcher switches on `item.__itemTypeId`, so we
+     * must deserialize the raw payload first (this is what adds `__itemTypeId`).
+     * Without this step every record falls through to the default branch and the
+     * plugin shows "No preview links available for this record".
+     */
+    const recordUrl = await recordToWebsiteRoute(deserializeRawItem(item), locale);
 
     const response: WebPreviewsResponse = { previewLinks: [] };
 
