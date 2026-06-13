@@ -17,20 +17,25 @@ interface Props {
 const { article: articleProp } = Astro.props;
 const article = readFragment(ArticleViewFragment, articleProp);
 
-const dateLabel = new Intl.DateTimeFormat('it-IT', {
-  day: '2-digit',
-  month: 'long',
-  year: 'numeric',
-  timeZone: 'UTC',
-}).format(new Date(article._firstPublishedAt));
+const articleDate = new Date(article._firstPublishedAt);
+const fmtIt = (opts: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('it-IT', { ...opts, timeZone: 'UTC' }).format(articleDate);
+const calMonth = fmtIt({ month: 'long' });
+const calDay = fmtIt({ day: 'numeric' });
+const calYear = fmtIt({ year: 'numeric' });
 const categories = article.categories.map((category) => category.name).join(', ');
 const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
 ---
 
 <article class="page article-detail" data-reveal>
+  <time class="article-cal" datetime={article._firstPublishedAt}>
+    <span class="article-cal__month">{calMonth}</span>
+    <span class="article-cal__day">{calDay}</span>
+    <span class="article-cal__year">{calYear}</span>
+  </time>
+
   <div class="article-box__meta">
     <span>{categories}</span>
-    <span>{dateLabel}</span>
   </div>
 
   {article.premium && <PremiumBadge />}
@@ -85,6 +90,55 @@ const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
 </article>
 
 <style>
+  .article-detail {
+    position: relative;
+  }
+
+  /* Tear-off calendar chip: month band on top, big day, year below. Sits at the
+     top-right and pokes slightly above the card's top border. */
+  .article-cal {
+    position: absolute;
+    top: 0;
+    right: clamp(var(--space-3), 4vw, var(--space-5));
+    transform: translateY(-52%);
+    z-index: 2;
+    width: 4.6rem;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--color-paper);
+    border: 1px solid var(--color-hairline);
+    box-shadow: 0 12px 28px -16px oklch(0.27 0.02 110 / 0.55);
+    font-family: var(--font-label);
+    text-align: center;
+    line-height: 1;
+  }
+  .article-cal__month {
+    display: block;
+    padding: 0.34rem 0.2rem;
+    background-color: var(--color-link-strong);
+    color: var(--color-paper);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .article-cal__day {
+    display: block;
+    padding: 0.32rem 0 0.04rem;
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .article-cal__year {
+    display: block;
+    padding-bottom: 0.42rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+  }
+
   .article-detail__title {
     font-size: var(--text-h1);
     line-height: 1.1;
