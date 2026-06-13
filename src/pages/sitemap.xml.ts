@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { graphql } from '~/lib/datocms/graphql';
 import { executeQuery } from '~/lib/datocms/executeQuery';
-import { articlePath, categoryPath } from '~/lib/urls';
+import { articlePath, categoryPath, pagePath } from '~/lib/urls';
 
 const pageQuery = graphql(/* GraphQL */ `
   query SitemapArticlesQuery($skip: IntType!) {
@@ -17,6 +17,9 @@ const metaQuery = graphql(/* GraphQL */ `
     allArticleCategories {
       slug
     }
+    allPages(orderBy: position_ASC) {
+      slug
+    }
     premiumArticlesPage {
       slug
     }
@@ -24,7 +27,7 @@ const metaQuery = graphql(/* GraphQL */ `
 `);
 
 export const GET: APIRoute = async (context) => {
-  const { allArticleCategories, premiumArticlesPage } = await executeQuery(metaQuery);
+  const { allArticleCategories, allPages, premiumArticlesPage } = await executeQuery(metaQuery);
   const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 
   // DatoCMS caps `first` at 100, so page through all articles.
@@ -43,12 +46,8 @@ export const GET: APIRoute = async (context) => {
   const paths = [
     '/',
     '/articles',
-    '/cv',
-    '/why',
-    '/publications',
-    '/customer_service',
-    '/contacts',
     `/${premiumSlug}`,
+    ...allPages.map((page) => pagePath(page.slug)),
     ...allArticleCategories.map((category) => categoryPath(category.slug)),
     ...articles.map((article) => articlePath(article, premiumSlug)),
   ];

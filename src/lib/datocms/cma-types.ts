@@ -26,18 +26,15 @@ export type Article = ItemTypeDefinition<
     seo: {
       type: 'seo';
     };
+    content: {
+      type: 'structured_text';
+      blocks: TextBlock | VideoBlock | ImageBlock;
+    };
     body: {
       type: 'text';
     };
-    blocks: {
-      type: 'rich_text';
-      blocks: TextBlock | VideoBlock;
-    };
     documents: {
       type: 'links';
-    };
-    featured_image: {
-      type: 'file';
     };
   }
 >;
@@ -90,112 +87,6 @@ export type ArticleCategory = ItemTypeDefinition<
 export const ArticleCategory = {
   ID: '628',
   REF: { type: 'item_type', id: '628' },
-} as const;
-
-export type CustomerService = ItemTypeDefinition<
-  EnvironmentSettings,
-  '629',
-  {
-    title: {
-      type: 'string';
-    };
-    body: {
-      type: 'text';
-    };
-    seo: {
-      type: 'seo';
-    };
-  }
->;
-export const CustomerService = {
-  ID: '629',
-  REF: { type: 'item_type', id: '629' },
-} as const;
-
-export type Publications = ItemTypeDefinition<
-  EnvironmentSettings,
-  '630',
-  {
-    title: {
-      type: 'string';
-    };
-    body: {
-      type: 'text';
-    };
-    seo: {
-      type: 'seo';
-    };
-  }
->;
-export const Publications = {
-  ID: '630',
-  REF: { type: 'item_type', id: '630' },
-} as const;
-
-export type Why = ItemTypeDefinition<
-  EnvironmentSettings,
-  '631',
-  {
-    title: {
-      type: 'string';
-    };
-    body: {
-      type: 'text';
-    };
-    seo: {
-      type: 'seo';
-    };
-  }
->;
-export const Why = {
-  ID: '631',
-  REF: { type: 'item_type', id: '631' },
-} as const;
-
-export type Cv = ItemTypeDefinition<
-  EnvironmentSettings,
-  '632',
-  {
-    title: {
-      type: 'string';
-    };
-    body: {
-      type: 'text';
-    };
-    seo: {
-      type: 'seo';
-    };
-  }
->;
-export const Cv = {
-  ID: '632',
-  REF: { type: 'item_type', id: '632' },
-} as const;
-
-export type Contacts = ItemTypeDefinition<
-  EnvironmentSettings,
-  '633',
-  {
-    title: {
-      type: 'string';
-    };
-    body: {
-      type: 'text';
-    };
-    map: {
-      type: 'lat_lon';
-    };
-    seo: {
-      type: 'seo';
-    };
-    slug: {
-      type: 'slug';
-    };
-  }
->;
-export const Contacts = {
-  ID: '633',
-  REF: { type: 'item_type', id: '633' },
 } as const;
 
 export type Link = ItemTypeDefinition<
@@ -389,11 +280,6 @@ export type AnyModel =
   | Article
   | Home
   | ArticleCategory
-  | CustomerService
-  | Publications
-  | Why
-  | Cv
-  | Contacts
   | Link
   | Document
   | PremiumArticlesPage

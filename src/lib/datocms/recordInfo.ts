@@ -13,14 +13,9 @@ import {
   type AnyModel,
   Article,
   ArticleCategory,
-  Contacts,
-  Cv,
-  CustomerService,
   Home,
   Page,
   PremiumArticlesPage,
-  Publications,
-  Why,
 } from './cma-types';
 import { graphql } from './graphql';
 import { executeQuery } from './executeQuery';
@@ -67,16 +62,6 @@ export async function recordToWebsiteRoute(
     }
     case Home.ID:
       return '/';
-    case Cv.ID:
-      return '/cv';
-    case Why.ID:
-      return '/why';
-    case Publications.ID:
-      return '/publications';
-    case CustomerService.ID:
-      return '/customer_service';
-    case Contacts.ID:
-      return '/contacts';
     default:
       return null;
   }

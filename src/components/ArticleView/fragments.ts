@@ -1,10 +1,15 @@
 import { graphql } from '~/lib/datocms/graphql';
 import { TagFragment } from '~/lib/datocms/commonFragments';
-import { ResponsiveImageFragment } from '~/components/ResponsiveImage/fragments';
+import { TextBlockFragment } from '~/components/TextBlock';
+import { VideoBlockFragment } from '~/components/VideoBlock';
+import { ImageBlockFragment } from '~/components/ImageBlock';
+import { ArticleLinkFragment } from '~/components/LinkToArticle';
+import { PageLinkFragment } from '~/components/LinkToPage';
 
 /**
- * Full article detail. `body` and block `text` are HTML (`markdown: true`);
- * `videoUrl` is the external-video field. Includes `_seoMetaTags` so the route
+ * Full article detail. The body lives in the `content` Structured Text field
+ * (embedded Text/Video/Image blocks + inline links to Article/Page records).
+ * `abstract` is HTML (`markdown: true`); includes `_seoMetaTags` so the route
  * can forward them to the Layout.
  */
 export const ArticleViewFragment = graphql(
@@ -19,18 +24,9 @@ export const ArticleViewFragment = graphql(
         ...TagFragment
       }
       abstract(markdown: true)
-      body(markdown: true)
       categories {
         name
         slug
-      }
-      featuredImage {
-        responsiveImage(
-          imgixParams: { w: 1200, fit: max }
-          sizes: "(max-width: 770px) 100vw, 770px"
-        ) {
-          ...ResponsiveImageFragment
-        }
       }
       documents {
         id
@@ -39,25 +35,34 @@ export const ArticleViewFragment = graphql(
           url
         }
       }
-      blocks {
-        __typename
-        ... on TextBlockRecord {
-          id
-          text(markdown: true)
-        }
-        ... on VideoBlockRecord {
-          id
-          videoUrl {
-            url
-            provider
-            providerUid
-            title
-            width
-            height
+      content {
+        value
+        blocks {
+          __typename
+          ... on RecordInterface {
+            id
           }
+          ...TextBlockFragment
+          ...VideoBlockFragment
+          ...ImageBlockFragment
+        }
+        links {
+          __typename
+          ... on RecordInterface {
+            id
+          }
+          ...ArticleLinkFragment
+          ...PageLinkFragment
         }
       }
     }
   `,
-  [TagFragment, ResponsiveImageFragment],
+  [
+    TagFragment,
+    TextBlockFragment,
+    VideoBlockFragment,
+    ImageBlockFragment,
+    ArticleLinkFragment,
+    PageLinkFragment,
+  ],
 );

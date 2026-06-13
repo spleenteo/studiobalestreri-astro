@@ -1,8 +1,11 @@
 ---
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
-import { ResponsiveImage } from '~/components/ResponsiveImage';
-import { RichText } from '~/components/RichText';
-import { VideoEmbed } from '~/components/VideoEmbed';
+import { Text } from '~/components/Text';
+import { TextBlock } from '~/components/TextBlock';
+import { VideoBlock } from '~/components/VideoBlock';
+import { ImageBlock } from '~/components/ImageBlock';
+import { LinkToArticle } from '~/components/LinkToArticle';
+import { LinkToPage } from '~/components/LinkToPage';
 import { ShareLinks } from '~/components/ShareLinks';
 import { ArticleViewFragment } from './fragments';
 
@@ -32,14 +35,6 @@ const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
   <h1 class="article-detail__title">{article.title}</h1>
 
   {
-    article.featuredImage?.responsiveImage && (
-      <div class="article-detail__image">
-        <ResponsiveImage data={article.featuredImage.responsiveImage} />
-      </div>
-    )
-  }
-
-  {
     /*
      * PREMIUM GATE (seam) — see docs/shaping/frontend-shaping.md (R6).
      * Today every article renders in full. To re-enable gating later, this is
@@ -49,21 +44,18 @@ const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
      */
   }
 
-  <RichText html={article.body} />
-
-  {
-    article.blocks.map((block) =>
-      block.__typename === 'TextBlockRecord' ? (
-        <div class="article-detail__block">
-          <RichText html={block.text} />
-        </div>
-      ) : block.__typename === 'VideoBlockRecord' ? (
-        <div class="article-detail__block">
-          <VideoEmbed video={block.videoUrl} />
-        </div>
-      ) : null,
-    )
-  }
+  <Text
+    data={article.content}
+    blockComponents={{
+      TextBlockRecord: TextBlock,
+      VideoBlockRecord: VideoBlock,
+      ImageBlockRecord: ImageBlock,
+    }}
+    linkToRecordComponents={{
+      ArticleRecord: LinkToArticle,
+      PageRecord: LinkToPage,
+    }}
+  />
 
   {
     article.documents.length > 0 && (

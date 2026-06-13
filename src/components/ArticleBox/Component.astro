@@ -1,6 +1,5 @@
 ---
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
-import { ResponsiveImage } from '~/components/ResponsiveImage';
 import { RichText } from '~/components/RichText';
 import { articlePath } from '~/lib/urls';
 import { excerpt } from '~/lib/text';
@@ -31,14 +30,6 @@ const categories = article.categories.map((category) => category.name).join(', '
   </div>
 
   <h2 class="article-box__title"><a href={href}>{article.title}</a></h2>
-
-  {
-    article.featuredImage?.responsiveImage && (
-      <a class="article-box__image-link" href={href}>
-        <ResponsiveImage data={article.featuredImage.responsiveImage} />
-      </a>
-    )
-  }
 
   <div class="article-box__excerpt">
     {article.abstract ? <RichText html={article.abstract} /> : <p>{excerpt(article.body)}</p>}

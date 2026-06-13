@@ -1,6 +1,5 @@
 ---
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
-import { ResponsiveImage } from '~/components/ResponsiveImage';
 import { articlePath } from '~/lib/urls';
 import { ArticlePreviewFragment } from './fragments';
 
@@ -25,11 +24,4 @@ const dateLabel = new Intl.DateTimeFormat('it-IT', {
     <div class="hl__date">{article.premium ? `${dateLabel} · Premium` : dateLabel}</div>
     <div class="hl__title">{article.title}</div>
   </div>
-  {
-    article.featuredImage?.responsiveImage && (
-      <div class="hl__image">
-        <ResponsiveImage data={article.featuredImage.responsiveImage} />
-      </div>
-    )
-  }
 </a>

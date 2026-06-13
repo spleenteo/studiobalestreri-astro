@@ -1,0 +1,17 @@
+---
+/**
+ * Renders a `TextBlock` embedded in a Structured Text body: a rich-text
+ * (markdown → HTML) passage, via the shared `<RichText />`.
+ */
+import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { RichText } from '~/components/RichText';
+import { TextBlockFragment } from './fragments';
+
+interface Props {
+  block: FragmentOf<typeof TextBlockFragment>;
+}
+
+const { text } = readFragment(TextBlockFragment, Astro.props.block);
+---
+
+{text && <RichText html={text} />}

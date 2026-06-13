@@ -81,7 +81,16 @@ type ArticleCategoryRecord implements RecordInterface {
   updatedAt: DateTime!
 }
 
-union ArticleModelBlocksField = TextBlockRecord | VideoBlockRecord
+union ArticleModelContentBlocksField = ImageBlockRecord | TextBlockRecord | VideoBlockRecord
+
+type ArticleModelContentField {
+  blocks: [ArticleModelContentBlocksField!]!
+  inlineBlocks: [String!]!
+  links: [ArticleModelContentLinksField!]!
+  value: JsonField!
+}
+
+union ArticleModelContentLinksField = ArticleRecord | PageRecord
 
 input ArticleModelFilter {
   _createdAt: CreatedAtFilter
@@ -98,8 +107,8 @@ input ArticleModelFilter {
   abstract: TextFilter
   body: TextFilter
   categories: LinksFilter
+  content: StructuredTextFilter
   documents: LinksFilter
-  featuredImage: FileFilter
   premium: BooleanFilter
   seo: SeoFilter
   slug: SlugFilter
@@ -161,15 +170,14 @@ type ArticleRecord implements RecordInterface {
     """Process content as markdown"""
     markdown: Boolean
   ): String
-  blocks: [ArticleModelBlocksField!]!
   body(
     """Process content as markdown"""
     markdown: Boolean
   ): String
   categories: [ArticleCategoryRecord!]!
+  content: ArticleModelContentField
   createdAt: DateTime!
   documents: [DocumentRecord!]!
-  featuredImage: FileField
   id: ItemId!
   premium: BooleanType!
   seo: SeoField
@@ -215,39 +223,6 @@ type ColorField {
   red: IntType!
 }
 
-"""Record of type Contatti (contacts)"""
-type ContactsRecord implements RecordInterface {
-  _createdAt: DateTime!
-
-  """Editing URL"""
-  _editingUrl: String
-  _firstPublishedAt: DateTime!
-  _isValid: BooleanType!
-  _modelApiKey: String!
-  _publicationScheduledAt: DateTime
-  _publishedAt: DateTime!
-
-  """Generates SEO and Social card meta tags to be used in your frontend"""
-  _seoMetaTags(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-  ): [Tag!]!
-  _status: ItemStatus!
-  _unpublishingScheduledAt: DateTime
-  _updatedAt: DateTime!
-  body(
-    """Process content as markdown"""
-    markdown: Boolean
-  ): String
-  createdAt: DateTime!
-  id: ItemId!
-  map: LatLonField
-  seo: SeoField
-  slug: String
-  title: String!
-  updatedAt: DateTime!
-}
-
 """Specifies how to filter by creation datetime"""
 input CreatedAtFilter {
   """
@@ -287,68 +262,6 @@ input CreatedAtFilter {
 }
 
 scalar CustomData
-
-"""Record of type Servizi clienti (customer_service)"""
-type CustomerServiceRecord implements RecordInterface {
-  _createdAt: DateTime!
-
-  """Editing URL"""
-  _editingUrl: String
-  _firstPublishedAt: DateTime!
-  _isValid: BooleanType!
-  _modelApiKey: String!
-  _publicationScheduledAt: DateTime
-  _publishedAt: DateTime!
-
-  """Generates SEO and Social card meta tags to be used in your frontend"""
-  _seoMetaTags(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-  ): [Tag!]!
-  _status: ItemStatus!
-  _unpublishingScheduledAt: DateTime
-  _updatedAt: DateTime!
-  body(
-    """Process content as markdown"""
-    markdown: Boolean
-  ): String
-  createdAt: DateTime!
-  id: ItemId!
-  seo: SeoField
-  title: String!
-  updatedAt: DateTime!
-}
-
-"""Record of type CV (cv)"""
-type CvRecord implements RecordInterface {
-  _createdAt: DateTime!
-
-  """Editing URL"""
-  _editingUrl: String
-  _firstPublishedAt: DateTime!
-  _isValid: BooleanType!
-  _modelApiKey: String!
-  _publicationScheduledAt: DateTime
-  _publishedAt: DateTime!
-
-  """Generates SEO and Social card meta tags to be used in your frontend"""
-  _seoMetaTags(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-  ): [Tag!]!
-  _status: ItemStatus!
-  _unpublishingScheduledAt: DateTime
-  _updatedAt: DateTime!
-  body(
-    """Process content as markdown"""
-    markdown: Boolean
-  ): String
-  createdAt: DateTime!
-  id: ItemId!
-  seo: SeoField
-  title: String!
-  updatedAt: DateTime!
-}
 
 """A ISO 8601 compliant datetime value"""
 scalar DateTime
@@ -2760,11 +2673,6 @@ input JsonFilter {
   exists: BooleanType
 }
 
-type LatLonField {
-  latitude: FloatType!
-  longitude: FloatType!
-}
-
 input LinkModelFilter {
   _createdAt: CreatedAtFilter
   createdAt: CreatedAtFilter
@@ -3033,37 +2941,6 @@ type PremiumArticlesPageRecord implements RecordInterface {
   ): String
   id: ItemId!
   slug: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
-"""Record of type Pubblicazioni (publications)"""
-type PublicationsRecord implements RecordInterface {
-  _createdAt: DateTime!
-
-  """Editing URL"""
-  _editingUrl: String
-  _firstPublishedAt: DateTime!
-  _isValid: BooleanType!
-  _modelApiKey: String!
-  _publicationScheduledAt: DateTime
-  _publishedAt: DateTime!
-
-  """Generates SEO and Social card meta tags to be used in your frontend"""
-  _seoMetaTags(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-  ): [Tag!]!
-  _status: ItemStatus!
-  _unpublishingScheduledAt: DateTime
-  _updatedAt: DateTime!
-  body(
-    """Process content as markdown"""
-    markdown: Boolean
-  ): String
-  createdAt: DateTime!
-  id: ItemId!
-  seo: SeoField
   title: String!
   updatedAt: DateTime!
 }
@@ -3353,39 +3230,6 @@ type Query {
     orderBy: [ArticleCategoryModelOrderBy] = [_updatedAt_DESC]
   ): ArticleCategoryRecord
 
-  """Returns the single instance record"""
-  contacts(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
-  ): ContactsRecord
-
-  """Returns the single instance record"""
-  customerService(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
-  ): CustomerServiceRecord
-
-  """Returns the single instance record"""
-  cv(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
-  ): CvRecord
-
   """Returns a specific record"""
   document(
     """The locale to use to fetch the field's content"""
@@ -3447,17 +3291,6 @@ type Query {
     fallbackLocales: [SiteLocale!]
   ): PremiumArticlesPageRecord
 
-  """Returns the single instance record"""
-  publications(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
-  ): PublicationsRecord
-
   """Returns a specific record"""
   schemaMigration(
     """The locale to use to fetch the field's content"""
@@ -3496,17 +3329,6 @@ type Query {
     filter: UserModelFilter
     orderBy: [UserModelOrderBy] = [_updatedAt_DESC]
   ): UserRecord
-
-  """Returns the single instance record"""
-  why(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-
-    """
-    If you want to fallback to a default translation when a translation has not been found
-    """
-    fallbackLocales: [SiteLocale!]
-  ): WhyRecord
 }
 
 interface RecordInterface {
@@ -4485,37 +4307,6 @@ enum VideoMp4Res {
   low
   medium
   high
-}
-
-"""Record of type Perchè questo sito? (why)"""
-type WhyRecord implements RecordInterface {
-  _createdAt: DateTime!
-
-  """Editing URL"""
-  _editingUrl: String
-  _firstPublishedAt: DateTime!
-  _isValid: BooleanType!
-  _modelApiKey: String!
-  _publicationScheduledAt: DateTime
-  _publishedAt: DateTime!
-
-  """Generates SEO and Social card meta tags to be used in your frontend"""
-  _seoMetaTags(
-    """The locale to use to fetch the field's content"""
-    locale: SiteLocale
-  ): [Tag!]!
-  _status: ItemStatus!
-  _unpublishingScheduledAt: DateTime
-  _updatedAt: DateTime!
-  body(
-    """Process content as markdown"""
-    markdown: Boolean
-  ): String
-  createdAt: DateTime!
-  id: ItemId!
-  seo: SeoField
-  title: String!
-  updatedAt: DateTime!
 }
 
 type focalPoint {
