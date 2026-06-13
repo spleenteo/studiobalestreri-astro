@@ -376,6 +376,15 @@ p {
 
 /* Mobile: off-canvas drawer */
 @media (max-width: 63.99em) {
+  /*
+   * Lift the shell above the header (z-index 10). The hamburger toggler and the
+   * drawer are `position: fixed` but live inside `.shell`, whose own stacking
+   * context (z-index 1) otherwise traps them *under* the header — so the button
+   * was hidden until the header scrolled away.
+   */
+  .shell {
+    z-index: 20;
+  }
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
