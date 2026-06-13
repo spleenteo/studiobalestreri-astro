@@ -1,9 +1,9 @@
 import { graphql } from '~/lib/datocms/graphql';
 
 /**
- * Data for the full article card (home, archive, premium list). `abstract` and
- * `body` are requested as HTML (`markdown: true`) so they can be rendered via
- * <RichText /> / used for the excerpt.
+ * Data for the full article card (home, archive, premium list). The card shows
+ * `abstract` (HTML, `markdown: true`) when present, otherwise a plain-text
+ * excerpt derived from the `content` Structured Text.
  */
 export const ArticleBoxFragment = graphql(/* GraphQL */ `
   fragment ArticleBoxFragment on ArticleRecord {
@@ -13,7 +13,9 @@ export const ArticleBoxFragment = graphql(/* GraphQL */ `
     premium
     _firstPublishedAt
     abstract(markdown: true)
-    body(markdown: true)
+    content {
+      value
+    }
     categories {
       name
     }

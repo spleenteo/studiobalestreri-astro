@@ -1,5 +1,6 @@
 ---
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { render as structuredTextToPlainText } from 'datocms-structured-text-to-plain-text';
 import { RichText } from '~/components/RichText';
 import { articlePath } from '~/lib/urls';
 import { excerpt } from '~/lib/text';
@@ -21,6 +22,17 @@ const dateLabel = new Intl.DateTimeFormat('it-IT', {
   timeZone: 'UTC',
 }).format(new Date(article._firstPublishedAt));
 const categories = article.categories.map((category) => category.name).join(', ');
+
+// When there's no explicit abstract, derive the card excerpt from the body
+// (`content` Structured Text) as plain text.
+let contentExcerpt = '';
+if (!article.abstract) {
+  try {
+    contentExcerpt = excerpt(structuredTextToPlainText(article.content) ?? '');
+  } catch {
+    contentExcerpt = '';
+  }
+}
 ---
 
 <article class="article-box" data-reveal>
@@ -32,7 +44,7 @@ const categories = article.categories.map((category) => category.name).join(', '
   <h2 class="article-box__title"><a href={href}>{article.title}</a></h2>
 
   <div class="article-box__excerpt">
-    {article.abstract ? <RichText html={article.abstract} /> : <p>{excerpt(article.body)}</p>}
+    {article.abstract ? <RichText html={article.abstract} /> : <p>{contentExcerpt}</p>}
   </div>
 
   <a class="button button--small" href={href}>Leggi tutto</a>

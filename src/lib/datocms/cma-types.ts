@@ -30,9 +30,6 @@ export type Article = ItemTypeDefinition<
       type: 'structured_text';
       blocks: TextBlock | VideoBlock | ImageBlock;
     };
-    body: {
-      type: 'text';
-    };
     documents: {
       type: 'links';
     };
