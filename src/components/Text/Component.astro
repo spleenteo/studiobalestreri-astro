@@ -29,7 +29,7 @@ type Props = ComponentProps<typeof DatoStructuredText>;
 const { nodeOverrides, ...props } = Astro.props;
 ---
 
-<div data-datocms-content-link-group>
+<div class="structured-text" data-datocms-content-link-group>
   <DatoStructuredText
     {...props}
     nodeOverrides={/*
