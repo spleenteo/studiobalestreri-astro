@@ -5,7 +5,6 @@ import { executeQuery } from '~/lib/datocms/executeQuery';
 import { TagFragment } from '~/lib/datocms/commonFragments';
 import { isDraftModeEnabled } from '~/lib/draftMode';
 import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
-import { RichText } from '~/components/RichText';
 import { ArticleBox, ArticleBoxFragment } from '~/components/ArticleBox';
 
 /**
@@ -19,7 +18,7 @@ const query = graphql(
         _seoMetaTags {
           ...TagFragment
         }
-        claim(markdown: true)
+        claim
       }
       allArticles(orderBy: _firstPublishedAt_DESC, first: 15) {
         ...ArticleBoxFragment
@@ -41,13 +40,7 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 ---
 
 <Layout additionalSeo={home?._seoMetaTags ?? []}>
-  {
-    home?.claim && (
-      <div class="claim" data-reveal>
-        <RichText html={home.claim} />
-      </div>
-    )
-  }
+  {home?.claim && <h1 class="page-title" data-reveal>{home.claim}</h1>}
 
   <div class="page">
     {allArticles.map((article) => <ArticleBox article={article} premiumSlug={premiumSlug} />)}
