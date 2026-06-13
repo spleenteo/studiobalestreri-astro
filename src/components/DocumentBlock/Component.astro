@@ -1,8 +1,8 @@
 ---
 /**
- * Renders a `DocumentBlock` embedded in a Page's Structured Text body: a PDF
- * icon next to the file's human-readable name and, when present, a short
- * description of its content.
+ * Renders a `DocumentBlock` embedded in a Page's Structured Text body: a
+ * downloadable PDF shown by its caption (the required `description`, used as the
+ * title) with a PDF mark and a download affordance. The raw file name is hidden.
  */
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
 import { DocumentBlockFragment } from './fragments';
@@ -12,18 +12,14 @@ interface Props {
 }
 
 const { pdfFile, description } = readFragment(DocumentBlockFragment, Astro.props.block);
-
-// Human-readable label: the asset title set in DatoCMS, falling back to the
-// raw file name when no title was provided.
-const label = pdfFile.title || pdfFile.filename;
 ---
 
-<a class="document-block" href={pdfFile.url} target="_blank" rel="noopener noreferrer">
+<a class="document-block" href={pdfFile.url} target="_blank" rel="noopener noreferrer" download>
   <svg
     class="document-block__icon"
     viewBox="0 0 32 32"
-    width="36"
-    height="36"
+    width="34"
+    height="34"
     role="img"
     aria-label="PDF"
   >
@@ -39,19 +35,37 @@ const label = pdfFile.title || pdfFile.filename;
       fill="#fff">PDF</text
     >
   </svg>
-  <span class="document-block__text">
-    <span class="document-block__name">{label}</span>
-    {description && <span class="document-block__desc">{description}</span>}
-  </span>
+
+  <span class="document-block__label">{description}</span>
+
+  <svg
+    class="document-block__download"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    aria-hidden="true"
+  >
+    <path d="M12 3v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+    ></path>
+    <path
+      d="M8 11l4 4 4-4"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"></path>
+    <path d="M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+    ></path>
+  </svg>
 </a>
 
 <style>
   .document-block {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    margin: 0.5rem 0;
+    gap: 0.85rem;
+    padding: 0.85rem 1.1rem;
+    margin: 1rem 0;
     border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
     border-radius: 8px;
     text-decoration: none;
@@ -67,16 +81,18 @@ const label = pdfFile.title || pdfFile.filename;
   .document-block__icon {
     flex: none;
   }
-  .document-block__text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-  .document-block__name {
+  .document-block__label {
+    flex: 1;
+    min-width: 0;
     font-weight: 600;
+    line-height: 1.3;
   }
-  .document-block__desc {
-    font-size: 0.875rem;
-    opacity: 0.75;
+  .document-block__download {
+    flex: none;
+    color: var(--color-muted);
+    transition: color 0.15s ease;
+  }
+  .document-block:hover .document-block__download {
+    color: var(--color-link-strong);
   }
 </style>
