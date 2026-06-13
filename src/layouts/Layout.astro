@@ -13,7 +13,6 @@ import { buildMainMenu } from '~/lib/nav';
 import { Header } from '~/components/Header';
 import { Sidebar } from '~/components/Sidebar';
 import { Footer } from '~/components/Footer';
-import { DraftModeToggler } from '~/components/DraftModeToggler';
 
 type Props = {
   additionalSeo?: TitleMetaLinkTag[];
@@ -102,7 +101,6 @@ const menu = buildMainMenu(allPages);
     <Footer />
 
     {draftModeEnabled && <ContentLink enableClickToEdit={{ hoverOnly: true }} />}
-    <DraftModeToggler />
 
     <script>
       const toggler = document.querySelector<HTMLButtonElement>('.sidebar__toggler');
