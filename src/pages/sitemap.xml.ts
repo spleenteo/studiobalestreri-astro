@@ -20,15 +20,11 @@ const metaQuery = graphql(/* GraphQL */ `
     allPages(orderBy: position_ASC) {
       slug
     }
-    premiumArticlesPage {
-      slug
-    }
   }
 `);
 
 export const GET: APIRoute = async (context) => {
-  const { allArticleCategories, allPages, premiumArticlesPage } = await executeQuery(metaQuery);
-  const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
+  const { allArticleCategories, allPages } = await executeQuery(metaQuery);
 
   // DatoCMS caps `first` at 100, so page through all articles.
   const articles: Array<{ slug: string; premium: boolean | null }> = [];
@@ -46,10 +42,9 @@ export const GET: APIRoute = async (context) => {
   const paths = [
     '/',
     '/articles',
-    `/${premiumSlug}`,
     ...allPages.map((page) => pagePath(page.slug)),
     ...allArticleCategories.map((category) => categoryPath(category.slug)),
-    ...articles.map((article) => articlePath(article, premiumSlug)),
+    ...articles.map((article) => articlePath(article)),
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

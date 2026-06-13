@@ -9,13 +9,12 @@ import { Pager } from '~/components/Pager';
 
 interface Props {
   articles: ReadonlyArray<FragmentOf<typeof ArticleBoxFragment>>;
-  premiumSlug: string;
   currentPage: number;
   totalPages: number;
   incipit?: string;
 }
 
-const { articles, premiumSlug, currentPage, totalPages, incipit } = Astro.props;
+const { articles, currentPage, totalPages, incipit } = Astro.props;
 ---
 
 <h1 class="page-title">Archivio articoli{currentPage > 1 ? ` · Pagina ${currentPage}` : ''}</h1>
@@ -23,6 +22,6 @@ const { articles, premiumSlug, currentPage, totalPages, incipit } = Astro.props;
 {incipit && <p class="claim__incipit">{incipit}</p>}
 
 <div class="page">
-  {articles.map((article) => <ArticleBox article={article} premiumSlug={premiumSlug} />)}
+  {articles.map((article) => <ArticleBox article={article} />)}
   <Pager currentPage={currentPage} totalPages={totalPages} />
 </div>

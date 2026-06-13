@@ -7,6 +7,7 @@ import { ImageBlock } from '~/components/ImageBlock';
 import { LinkToArticle } from '~/components/LinkToArticle';
 import { LinkToPage } from '~/components/LinkToPage';
 import { ShareLinks } from '~/components/ShareLinks';
+import { PremiumBadge } from '~/components/PremiumBadge';
 import { ArticleViewFragment } from './fragments';
 
 interface Props {
@@ -29,8 +30,10 @@ const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
 <article class="page article-detail" data-reveal>
   <div class="article-box__meta">
     <span>{categories}</span>
-    <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
+    <span>{dateLabel}</span>
   </div>
+
+  {article.premium && <PremiumBadge />}
 
   <h1 class="article-detail__title">{article.title}</h1>
 

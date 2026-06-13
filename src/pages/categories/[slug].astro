@@ -42,20 +42,15 @@ const articlesQuery = graphql(
       allArticles(orderBy: _firstPublishedAt_DESC, filter: { categories: { anyIn: $ids } }) {
         ...ArticlePreviewFragment
       }
-      premiumArticlesPage {
-        slug
-      }
     }
   `,
   [ArticlePreviewFragment],
 );
 
-const { allArticles, premiumArticlesPage } = await executeQuery(articlesQuery, {
+const { allArticles } = await executeQuery(articlesQuery, {
   variables: { ids: [articleCategory.id] },
   includeDrafts: draftModeEnabled,
 });
-
-const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 ---
 
 <Layout additionalSeo={articleCategory._seoMetaTags}>
@@ -69,7 +64,7 @@ const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
   }
 
   <div class="page">
-    {allArticles.map((article) => <ArticlePreview article={article} premiumSlug={premiumSlug} />)}
+    {allArticles.map((article) => <ArticlePreview article={article} />)}
   </div>
 
   <DraftModeQueryListener query={categoryQuery} variables={{ slug }} />

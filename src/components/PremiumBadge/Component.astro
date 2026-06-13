@@ -1,0 +1,40 @@
+---
+/**
+ * Small pill marking an article as premium content. Driven by the `premium`
+ * boolean; shown on cards and the article detail.
+ */
+---
+
+<span class="premium-badge">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="premium-badge__star">
+    <path
+      d="M12 2.5l2.95 5.98 6.6.96-4.77 4.65 1.12 6.57L12 17.55l-5.9 3.1 1.12-6.57L2.45 9.44l6.6-.96L12 2.5z"
+    ></path>
+  </svg>
+  Contenuto premium
+</span>
+
+<style>
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-family: var(--font-label);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    color: color-mix(in oklch, var(--color-link-strong) 75%, var(--color-ink));
+    background-color: color-mix(in oklch, var(--color-link-strong) 16%, transparent);
+  }
+  .premium-badge__star {
+    width: 0.85em;
+    height: 0.85em;
+    flex: none;
+    fill: var(--color-link-strong);
+  }
+</style>

@@ -9,19 +9,14 @@ const feedQuery = graphql(/* GraphQL */ `
     allArticles(orderBy: _firstPublishedAt_DESC, first: 50) {
       title
       slug
-      premium
       _firstPublishedAt
       abstract
-    }
-    premiumArticlesPage {
-      slug
     }
   }
 `);
 
 export const GET: APIRoute = async (context) => {
-  const { allArticles, premiumArticlesPage } = await executeQuery(feedQuery);
-  const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
+  const { allArticles } = await executeQuery(feedQuery);
   const site = context.site?.toString() ?? new URL(context.request.url).origin;
 
   return rss({
@@ -30,7 +25,7 @@ export const GET: APIRoute = async (context) => {
     site,
     items: allArticles.map((article) => ({
       title: article.title,
-      link: articlePath(article, premiumSlug),
+      link: articlePath(article),
       pubDate: new Date(article._firstPublishedAt),
       description: article.abstract ?? undefined,
     })),

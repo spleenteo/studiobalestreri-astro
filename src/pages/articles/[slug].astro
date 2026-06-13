@@ -16,8 +16,7 @@ import { DraftModeQueryListener } from '~/components/DraftModeQueryListener';
 /**
  * Combined route (preserves old URLs):
  *   - `/articles/2`     → archive pagination page (numeric slug)
- *   - `/articles/{slug}` → article detail (non-premium; premium ones are
- *     redirected to their `/{premium}/articles/{slug}` canonical URL)
+ *   - `/articles/{slug}` → article detail
  */
 const { slug = '' } = Astro.params;
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
@@ -37,11 +36,6 @@ if (isPageNumber) {
   if (!articleData.article) {
     return new Response(null, { status: 404, statusText: 'Not found' });
   }
-  const article = readFragment(ArticleViewFragment, articleData.article);
-  // Premium articles are canonical under the premium prefix.
-  if (article.premium) {
-    return Astro.redirect(`/${articleData.premiumSlug}/articles/${article.slug}`, 301);
-  }
 }
 
 const seo = articleData?.article
@@ -54,7 +48,6 @@ const seo = articleData?.article
     <Layout>
       <Archive
         articles={archive!.articles}
-        premiumSlug={archive!.premiumSlug}
         currentPage={Number(slug)}
         totalPages={archive!.totalPages}
       />

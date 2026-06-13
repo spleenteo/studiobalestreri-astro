@@ -23,27 +23,28 @@ const query = graphql(
       allArticles(orderBy: _firstPublishedAt_DESC, first: 15) {
         ...ArticleBoxFragment
       }
-      premiumArticlesPage {
-        slug
-      }
     }
   `,
   [TagFragment, ArticleBoxFragment],
 );
 
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
-const { home, allArticles, premiumArticlesPage } = await executeQuery(query, {
+const { home, allArticles } = await executeQuery(query, {
   includeDrafts: draftModeEnabled,
 });
-
-const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 ---
 
 <Layout additionalSeo={home?._seoMetaTags ?? []}>
-  {home?.claim && <h1 class="page-title" data-reveal>{home.claim}</h1>}
+  {
+    home?.claim && (
+      <h1 class="page-title" data-reveal>
+        {home.claim}
+      </h1>
+    )
+  }
 
   <div class="page">
-    {allArticles.map((article) => <ArticleBox article={article} premiumSlug={premiumSlug} />)}
+    {allArticles.map((article) => <ArticleBox article={article} />)}
     <a class="button button--primary" href="/articles">Vedi tutti gli articoli</a>
   </div>
 

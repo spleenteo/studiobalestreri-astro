@@ -45,23 +45,16 @@ const query = graphql(
         title
         slug
       }
-      premiumArticlesPage {
-        slug
-      }
     }
   `,
   [TagFragment],
 );
 
 const draftModeEnabled = isDraftModeEnabled(Astro.cookies);
-const { _site, allArticleCategories, allLinks, allPages, premiumArticlesPage } = await executeQuery(
-  query,
-  {
-    includeDrafts: draftModeEnabled,
-  },
-);
+const { _site, allArticleCategories, allLinks, allPages } = await executeQuery(query, {
+  includeDrafts: draftModeEnabled,
+});
 
-const premiumSlug = premiumArticlesPage?.slug ?? 'premium';
 const menu = buildMainMenu(allPages);
 ---
 
@@ -87,12 +80,7 @@ const menu = buildMainMenu(allPages);
     <Header menu={menu} />
 
     <div class="shell">
-      <Sidebar
-        menu={menu}
-        categories={allArticleCategories}
-        links={allLinks}
-        premiumSlug={premiumSlug}
-      />
+      <Sidebar menu={menu} categories={allArticleCategories} links={allLinks} />
       <main id="main" class="main">
         <slot />
       </main>

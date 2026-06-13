@@ -2,19 +2,19 @@
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
 import { render as structuredTextToPlainText } from 'datocms-structured-text-to-plain-text';
 import { RichText } from '~/components/RichText';
+import { PremiumBadge } from '~/components/PremiumBadge';
 import { articlePath } from '~/lib/urls';
 import { excerpt } from '~/lib/text';
 import { ArticleBoxFragment } from './fragments';
 
 interface Props {
   article: FragmentOf<typeof ArticleBoxFragment>;
-  premiumSlug: string;
 }
 
-const { article: articleProp, premiumSlug } = Astro.props;
+const { article: articleProp } = Astro.props;
 const article = readFragment(ArticleBoxFragment, articleProp);
 
-const href = articlePath(article, premiumSlug);
+const href = articlePath(article);
 const dateLabel = new Intl.DateTimeFormat('it-IT', {
   day: '2-digit',
   month: 'short',
@@ -38,8 +38,10 @@ if (!article.abstract) {
 <article class="article-box" data-reveal>
   <div class="article-box__meta">
     <span>{categories}</span>
-    <span>{article.premium ? `Premium · ${dateLabel}` : dateLabel}</span>
+    <span>{dateLabel}</span>
   </div>
+
+  {article.premium && <PremiumBadge />}
 
   <h2 class="article-box__title"><a href={href}>{article.title}</a></h2>
 

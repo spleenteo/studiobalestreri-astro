@@ -14,10 +14,9 @@ interface Props {
   // category name, kept for the truncation tooltip and the accessible name.
   categories: ReadonlyArray<{ name: string; label: string; slug: string }>;
   links: ReadonlyArray<{ name: string; url: string }>;
-  premiumSlug: string;
 }
 
-const { menu, categories, links, premiumSlug } = Astro.props;
+const { menu, categories, links } = Astro.props;
 ---
 
 <button
@@ -57,7 +56,6 @@ const { menu, categories, links, premiumSlug } = Astro.props;
           </li>
         ))
       }
-      <li data-full="Premium"><a href={`/${premiumSlug}`}>Premium</a></li>
     </ul>
   </div>
 

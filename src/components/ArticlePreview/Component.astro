@@ -1,16 +1,16 @@
 ---
 import { type FragmentOf, readFragment } from '~/lib/datocms/graphql';
+import { PremiumBadge } from '~/components/PremiumBadge';
 import { articlePath } from '~/lib/urls';
 import { ArticlePreviewFragment } from './fragments';
 
 interface Props {
   article: FragmentOf<typeof ArticlePreviewFragment>;
-  premiumSlug: string;
 }
 
-const { article: articleProp, premiumSlug } = Astro.props;
+const { article: articleProp } = Astro.props;
 const article = readFragment(ArticlePreviewFragment, articleProp);
-const href = articlePath(article, premiumSlug);
+const href = articlePath(article);
 const dateLabel = new Intl.DateTimeFormat('it-IT', {
   day: '2-digit',
   month: 'short',
@@ -21,7 +21,10 @@ const dateLabel = new Intl.DateTimeFormat('it-IT', {
 
 <a class="hl" href={href}>
   <div class="hl__content">
-    <div class="hl__date">{article.premium ? `${dateLabel} · Premium` : dateLabel}</div>
+    <div class="hl__date">
+      {dateLabel}
+      {article.premium && <PremiumBadge />}
+    </div>
     <div class="hl__title">{article.title}</div>
   </div>
 </a>

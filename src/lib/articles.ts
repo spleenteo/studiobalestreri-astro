@@ -14,9 +14,6 @@ export const archiveQuery = graphql(
       _allArticlesMeta {
         count
       }
-      premiumArticlesPage {
-        slug
-      }
     }
   `,
   [ArticleBoxFragment],
@@ -24,7 +21,7 @@ export const archiveQuery = graphql(
 
 export async function fetchArchivePage(page: number, includeDrafts: boolean) {
   const skip = (page - 1) * ARTICLES_PER_PAGE;
-  const { allArticles, _allArticlesMeta, premiumArticlesPage } = await executeQuery(archiveQuery, {
+  const { allArticles, _allArticlesMeta } = await executeQuery(archiveQuery, {
     variables: { first: ARTICLES_PER_PAGE, skip },
     includeDrafts,
   });
@@ -33,7 +30,6 @@ export async function fetchArchivePage(page: number, includeDrafts: boolean) {
     articles: allArticles,
     total: _allArticlesMeta.count,
     totalPages: Math.max(1, Math.ceil(_allArticlesMeta.count / ARTICLES_PER_PAGE)),
-    premiumSlug: premiumArticlesPage?.slug ?? 'premium',
   };
 }
 
@@ -43,22 +39,16 @@ export const articleQuery = graphql(
       article(filter: { slug: { eq: $slug } }) {
         ...ArticleViewFragment
       }
-      premiumArticlesPage {
-        slug
-      }
     }
   `,
   [ArticleViewFragment],
 );
 
 export async function fetchArticle(slug: string, includeDrafts: boolean) {
-  const { article, premiumArticlesPage } = await executeQuery(articleQuery, {
+  const { article } = await executeQuery(articleQuery, {
     variables: { slug },
     includeDrafts,
   });
 
-  return {
-    article,
-    premiumSlug: premiumArticlesPage?.slug ?? 'premium',
-  };
+  return { article };
 }
