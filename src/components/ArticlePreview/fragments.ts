@@ -9,7 +9,7 @@ export const ArticlePreviewFragment = graphql(
       title
       slug
       premium
-      pubDate
+      _firstPublishedAt
       featuredImage {
         responsiveImage(imgixParams: { w: 100, h: 100, fit: crop }) {
           ...ResponsiveImageFragment

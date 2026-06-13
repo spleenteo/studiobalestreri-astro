@@ -20,17 +20,14 @@ export type Article = ItemTypeDefinition<
     abstract: {
       type: 'text';
     };
-    pub_date: {
-      type: 'date';
+    premium: {
+      type: 'boolean';
     };
     seo: {
       type: 'seo';
     };
     body: {
       type: 'text';
-    };
-    premium: {
-      type: 'boolean';
     };
     blocks: {
       type: 'rich_text';

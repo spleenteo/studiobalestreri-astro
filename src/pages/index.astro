@@ -21,7 +21,7 @@ const query = graphql(
         }
         claim(markdown: true)
       }
-      allArticles(orderBy: pubDate_DESC, first: 15) {
+      allArticles(orderBy: _firstPublishedAt_DESC, first: 15) {
         ...ArticleBoxFragment
       }
       premiumArticlesPage {

@@ -13,7 +13,7 @@ export const ArticleBoxFragment = graphql(
       title
       slug
       premium
-      pubDate
+      _firstPublishedAt
       abstract(markdown: true)
       body(markdown: true)
       categories {

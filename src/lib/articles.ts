@@ -8,7 +8,7 @@ export const ARTICLES_PER_PAGE = 10;
 export const archiveQuery = graphql(
   /* GraphQL */ `
     query ArchiveQuery($first: IntType!, $skip: IntType!) {
-      allArticles(orderBy: pubDate_DESC, first: $first, skip: $skip) {
+      allArticles(orderBy: _firstPublishedAt_DESC, first: $first, skip: $skip) {
         ...ArticleBoxFragment
       }
       _allArticlesMeta {

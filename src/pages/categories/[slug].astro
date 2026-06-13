@@ -39,7 +39,7 @@ if (!articleCategory) {
 const articlesQuery = graphql(
   /* GraphQL */ `
     query CategoryArticlesQuery($ids: [ItemId]) {
-      allArticles(orderBy: pubDate_DESC, filter: { categories: { anyIn: $ids } }) {
+      allArticles(orderBy: _firstPublishedAt_DESC, filter: { categories: { anyIn: $ids } }) {
         ...ArticlePreviewFragment
       }
       premiumArticlesPage {

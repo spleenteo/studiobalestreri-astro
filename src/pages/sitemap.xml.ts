@@ -5,7 +5,7 @@ import { articlePath, categoryPath } from '~/lib/urls';
 
 const pageQuery = graphql(/* GraphQL */ `
   query SitemapArticlesQuery($skip: IntType!) {
-    allArticles(orderBy: pubDate_DESC, first: 100, skip: $skip) {
+    allArticles(orderBy: _firstPublishedAt_DESC, first: 100, skip: $skip) {
       slug
       premium
     }

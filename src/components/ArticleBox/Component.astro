@@ -19,7 +19,8 @@ const dateLabel = new Intl.DateTimeFormat('it-IT', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
-}).format(new Date(article.pubDate));
+  timeZone: 'UTC',
+}).format(new Date(article._firstPublishedAt));
 const categories = article.categories.map((category) => category.name).join(', ');
 ---
 

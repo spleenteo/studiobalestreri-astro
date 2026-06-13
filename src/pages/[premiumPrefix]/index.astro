@@ -27,7 +27,7 @@ const query = graphql(
           ...TagFragment
         }
       }
-      allArticles(orderBy: pubDate_DESC, filter: { premium: { eq: true } }) {
+      allArticles(orderBy: _firstPublishedAt_DESC, filter: { premium: { eq: true } }) {
         ...ArticleBoxFragment
       }
     }

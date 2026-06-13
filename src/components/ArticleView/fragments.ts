@@ -14,7 +14,7 @@ export const ArticleViewFragment = graphql(
       title
       slug
       premium
-      pubDate
+      _firstPublishedAt
       _seoMetaTags {
         ...TagFragment
       }

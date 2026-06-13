@@ -6,11 +6,11 @@ import { articlePath } from '~/lib/urls';
 
 const feedQuery = graphql(/* GraphQL */ `
   query FeedQuery {
-    allArticles(orderBy: pubDate_DESC, first: 50) {
+    allArticles(orderBy: _firstPublishedAt_DESC, first: 50) {
       title
       slug
       premium
-      pubDate
+      _firstPublishedAt
       abstract
     }
     premiumArticlesPage {
@@ -31,7 +31,7 @@ export const GET: APIRoute = async (context) => {
     items: allArticles.map((article) => ({
       title: article.title,
       link: articlePath(article, premiumSlug),
-      pubDate: new Date(article.pubDate),
+      pubDate: new Date(article._firstPublishedAt),
       description: article.abstract ?? undefined,
     })),
   });

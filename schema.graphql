@@ -101,7 +101,6 @@ input ArticleModelFilter {
   documents: LinksFilter
   featuredImage: FileFilter
   premium: BooleanFilter
-  pubDate: DateFilter
   seo: SeoFilter
   slug: SlugFilter
   title: StringFilter
@@ -134,8 +133,6 @@ enum ArticleModelOrderBy {
   _isValid_DESC
   premium_ASC
   premium_DESC
-  pubDate_ASC
-  pubDate_DESC
   title_ASC
   title_DESC
 }
@@ -175,7 +172,6 @@ type ArticleRecord implements RecordInterface {
   featuredImage: FileField
   id: ItemId!
   premium: BooleanType!
-  pubDate: Date!
   seo: SeoField
   slug: String!
   title: String!
@@ -352,41 +348,6 @@ type CvRecord implements RecordInterface {
   seo: SeoField
   title: String!
   updatedAt: DateTime!
-}
-
-"""A ISO 8601 compliant date value"""
-scalar Date
-
-"""Specifies how to filter Date fields"""
-input DateFilter {
-  """
-  Filter records with a value that's strictly greater than the one specified
-  """
-  gt: Date
-
-  """Filter records with a value that's less than the one specified"""
-  lt: Date
-
-  """
-  Filter records with a value that's greater than or equal to the one specified
-  """
-  gte: Date
-
-  """
-  Filter records with a value that's less or equal than the one specified
-  """
-  lte: Date
-
-  """
-  Filter records with the specified field defined (i.e. with any value) or not
-  """
-  exists: BooleanType
-
-  """Search for records with an exact match"""
-  eq: Date
-
-  """Exclude records with an exact match"""
-  neq: Date
 }
 
 """A ISO 8601 compliant datetime value"""
