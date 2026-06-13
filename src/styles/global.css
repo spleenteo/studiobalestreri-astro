@@ -22,7 +22,9 @@
   --color-sage: oklch(0.62 0.045 128); /* the one accent + footer drench */
   --color-sage-deep: oklch(0.54 0.05 130); /* hover / pressed sage */
   --color-link: oklch(0.47 0.06 132); /* inline links on paper (≥4.5:1) */
-  --color-link-strong: oklch(0.585 0.135 66); /* vibrant amber/orange — structured-text links (≥4.5:1) */
+  --color-link-strong: oklch(
+    0.585 0.135 66
+  ); /* vibrant amber/orange — structured-text links (≥4.5:1) */
   --color-link-strong-hover: oklch(0.5 0.14 62); /* hover / pressed */
   --color-hairline: oklch(0.88 0.008 110); /* 1px separators */
   --color-rule: oklch(0.8 0.01 110); /* stronger rules (header base) */
@@ -620,6 +622,17 @@ p {
 .structured-text :is(p, li, blockquote) a:hover {
   color: var(--color-link-strong-hover);
   text-decoration-color: currentColor;
+}
+
+/*
+ * Highlighted text (<mark>) inside Structured Text: a soft wash of the
+ * institutional sage — a gentle emphasis, not the browser's bright yellow.
+ */
+.structured-text mark {
+  background-color: color-mix(in oklch, var(--color-sage) 30%, transparent);
+  color: inherit;
+  padding: 0.05em 0.18em;
+  border-radius: 2px;
 }
 .formatted-content ul,
 .formatted-content ol {
