@@ -61,5 +61,5 @@ Un sito Astro SSR che:
 
 ## Decisioni di hosting
 
-Rinviata (Vercel vs Netlify). Sviluppo in locale con adapter `node`; l'adapter si sceglie
-al build senza toccare il codice applicativo.
+**Vercel** (deciso). Sviluppo in locale con adapter `node`; su Vercel l'adapter si sceglie
+al build (via `process.env.VERCEL`) senza toccare il codice applicativo.

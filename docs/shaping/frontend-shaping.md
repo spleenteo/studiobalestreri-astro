@@ -93,7 +93,7 @@ Scelte default prese in autonomia (utente assente): Mailchimp/iubenda = valori d
 | Premium (A8/A9)   | **apri+cucitura** / gate ora / nascondi              | **Apri tutto + cucitura server-side**; `user` conservato |
 | Contenuti (A3)    | **HTML `markdown:true` ora** / StructuredText subito | **HTML ora**, swap localizzato dopo                      |
 | Condivisione (A8) | AddThis / **link semplici** / niente                 | **Link semplici** (LinkedIn, X, email)                   |
-| Hosting           | Vercel / Netlify / **dopo**                          | **Deciso dopo**; dev con adapter node                    |
+| Hosting           | Vercel / Netlify / dopo                              | **Vercel**; dev con adapter node, scelto al build        |
 
 ---
 
