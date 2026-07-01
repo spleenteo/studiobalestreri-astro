@@ -23,7 +23,7 @@ Copy `.env.example` to `.env`. Env vars are declared and validated in `astro.con
 
 ## Deployment
 
-`astro.config.mjs` uses `output: 'server'` with the **node** adapter (standalone) for local dev. The platform adapter is swapped in at build time: `vercel.json` and `netlify.toml` run `npx astro add vercel|netlify --yes` before building. Don't hardcode the node adapter assumption when changing deploy config.
+`astro.config.mjs` uses `output: 'server'`. The adapter is picked at build time from `process.env.VERCEL`: production deploys on Vercel use the **Vercel** adapter, and local dev/build falls back to the **node** standalone adapter. Both adapters are pinned dependencies (major must track the Astro major — Astro 6 ⇒ `@astrojs/vercel@10` / `@astrojs/node@10`); `vercel.json` just runs `npm run build`. Don't hardcode the node adapter assumption when changing deploy config.
 
 ## Architecture
 

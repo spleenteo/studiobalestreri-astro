@@ -1,15 +1,22 @@
 import { defineConfig, envField } from 'astro/config';
 
 import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
+
+/*
+ * The adapter is picked at build time: Vercel sets `VERCEL=1` in its build env,
+ * so production deploys use the Vercel adapter; everything else (local dev/build)
+ * falls back to the Node standalone adapter. `process.env` is correct here — the
+ * config file runs in plain Node, before `astro:env` is available.
+ */
+const adapter = process.env.VERCEL ? vercel() : node({ mode: 'standalone' });
 
 // https://astro.build/config
 export default defineConfig({
   devToolbar: { enabled: false },
   output: 'server',
-  adapter: node({
-    mode: 'standalone',
-  }),
+  adapter,
   security: {
     checkOrigin: false,
   },
