@@ -1,0 +1,22 @@
+---
+/*
+ * Google Analytics 4 (gtag.js).
+ *
+ * The Measurement ID is a public identifier — it ships in the page HTML on every
+ * request and is identical across environments — so it lives here as a constant
+ * rather than an env var (no dashboard config needed to make it work on deploy).
+ *
+ * Layout mounts this only in a production build and never in Draft Mode, so local
+ * dev and editors' preview sessions don't pollute the metrics.
+ */
+---
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SE98XYFHET" is:inline></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-SE98XYFHET', { anonymize_ip: true });
+</script>

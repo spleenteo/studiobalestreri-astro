@@ -13,6 +13,7 @@ import { buildMainMenu } from '~/lib/nav';
 import { Header } from '~/components/Header';
 import { Sidebar } from '~/components/Sidebar';
 import { Footer } from '~/components/Footer';
+import { GoogleAnalytics } from '~/components/GoogleAnalytics';
 
 type Props = {
   additionalSeo?: TitleMetaLinkTag[];
@@ -64,6 +65,7 @@ const menu = buildMainMenu(allPages);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    {import.meta.env.PROD && !draftModeEnabled && <GoogleAnalytics />}
     <meta name="google-site-verification" content="ryqku03JkCVZH_yXWlzoscr5m_Y0pXUHAXXYGbfKsZA" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
